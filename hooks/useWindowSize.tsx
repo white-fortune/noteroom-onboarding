@@ -1,0 +1,27 @@
+import { useEffect, useState } from "react"
+
+type TWindowSize = {
+    width: number,
+    height: number
+}
+
+export default function useWindowSize() {
+    const [windowSize, setWindowSize] = useState<TWindowSize>({
+        width: window.innerWidth,
+        height: window.innerWidth
+    })
+
+    useEffect(() => {
+        function handleWindowSize() {
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerWidth
+            })
+        }
+        window.addEventListener("resize", handleWindowSize)
+
+        return () => window.removeEventListener("resize", handleWindowSize)
+    }, [])
+
+    return windowSize
+}
