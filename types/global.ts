@@ -1,0 +1,1 @@
+export type StateController<T> = [T, React.Dispatch<React.SetStateAction<T>>]
