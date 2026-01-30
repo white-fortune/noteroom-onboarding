@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
             const tokenID = passwordResetCookie.value
             token = await AuthTokenService.getTokenByTokenID(tokenID)
         } else {
-            const response = await AuthTokenService.createToken("reset", email, AuthTokenService.createOTP())
+            const response = await AuthTokenService.createToken("reset", email)
             token = response.token!
         }
 

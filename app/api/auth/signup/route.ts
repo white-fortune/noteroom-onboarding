@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
             password: body.password,
         })
 
-        const response = await AuthTokenService.createToken("email", body.email, AuthTokenService.createOTP())
+        const response = await AuthTokenService.createToken("email", body.email)
         if (!response.ok) {
             //FIXME: what to do if this fails
             return NextResponse.json({ ok: false, message: "Couldn't create verification token" })

@@ -20,6 +20,14 @@ export default function OTPInput({ length, otpValue: [otpValue, setOtpValue] }: 
         inputRefs.current[index < length ? index + 1 : index]?.focus();
     }
 
+    function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+        const pastedData = e.clipboardData.getData("text");
+        const arrayedData = Array.from(pastedData);
+        if (arrayedData.length === length) {
+            setOtpValue(arrayedData);
+        }
+    }
+
     return (
         <div className={`grid grid-cols-6 gap-3 w-full`}>
             {Array.from({ length }, (_, idx) => idx).map(i => (
@@ -29,6 +37,7 @@ export default function OTPInput({ length, otpValue: [otpValue, setOtpValue] }: 
                     ref={(el) => setInputRef(i, el!)}
                     value={otpValue[i]}
                     onChange={(e) => handleOTPValueChange(i, e.target.value)}
+                    onPaste={handlePaste}
                     className={`
 						caret-sky-600 
 						aspect-square w-full

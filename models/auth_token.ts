@@ -1,3 +1,4 @@
+import AuthTokenService from "@/lib/auth_token"
 import { model, models, Schema } from "mongoose"
 import { nanoid } from "nanoid"
 
@@ -21,7 +22,8 @@ const authTokenSchema = new Schema<TAuthToken>({
     },
     otp: {
         type: String,
-        required: true
+        required: true,
+        default: () => AuthTokenService.createOTP()
     },
     type: {
         type: String,

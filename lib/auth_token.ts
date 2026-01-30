@@ -1,7 +1,7 @@
 import { authTokenModel } from "@/models/auth_token";
 
 export default class AuthTokenService {
-    static async createToken(type: "email" | "reset", email: string, otp: string) {
+    static async createToken(type: "email" | "reset", email: string) {
         try {
             let token = null
             
@@ -9,7 +9,7 @@ export default class AuthTokenService {
             if (existingToken) {
                 token = existingToken
             } else {
-                token = await authTokenModel.create({ type, email, otp })
+                token = await authTokenModel.create({ type, email })
             }
             return { ok: true, token: { ...token.toObject() } }
         } catch (error) {

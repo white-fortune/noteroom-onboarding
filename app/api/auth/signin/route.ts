@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
-            const response = await AuthTokenService.createToken("email", body.email, AuthTokenService.createOTP())
+            const response = await AuthTokenService.createToken("email", body.email)
             //FIXME: check response for errors
             const res = NextResponse.json({ ok: false, needVerification: true })
             res.cookies.set("email-verification", response.token!.tokenID)
