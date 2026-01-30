@@ -1,4 +1,5 @@
 import AuthTokenService from "@/lib/auth_token";
+import EmailService from "@/lib/brevo_email";
 import connectToDatabase from "@/lib/mongodb";
 import UserService from "@/lib/user";
 import { authUserModel } from "@/models/user";
@@ -27,6 +28,12 @@ export async function POST(request: NextRequest) {
         }
 
         const token = response.token!
+
+        await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
+            EMAIL: body.email,
+            OTP: token.otp
+        })
+
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })
         res.cookies.set("email-verification", token.tokenID)
         return res

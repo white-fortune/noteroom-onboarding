@@ -1,4 +1,5 @@
 import AuthTokenService from "@/lib/auth_token";
+import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
 import { authTokenModel } from "@/models/auth_token";
@@ -35,9 +36,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
             const response = await AuthTokenService.createToken("email", body.email)
-            //FIXME: check response for errors
+            if (!response.ok) {
+                return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
+            } 
+
+            const token = response.token!
+            await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
+                EMAIL: body.email,
+                OTP: token.otp
+            })
+
             const res = NextResponse.json({ ok: false, needVerification: true })
-            res.cookies.set("email-verification", response.token!.tokenID)
+            res.cookies.set("email-verification", token!.tokenID)
             return res
         }
     } catch (error) {

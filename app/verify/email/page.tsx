@@ -1,21 +1,6 @@
 import OTPForm from "@/components/verify-email/OTPForm";
-import AuthTokenService from "@/lib/auth_token";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default async function VerifyEmailPage() {
-    const emailVerificationCookie = (await cookies()).get("email-verification")
-
-    if (!emailVerificationCookie) {
-        return redirect("/signin")
-    }
-    
-    const token = emailVerificationCookie.value
-    const response = await AuthTokenService.getTokenByTokenID(token)
-    if (!response.token) {
-        return redirect("/signin")
-    }
-
     return (
         <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
             {/* Desktop Design */}
