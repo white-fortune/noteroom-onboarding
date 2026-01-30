@@ -38,7 +38,7 @@ export default function DesktopSigninForm() {
 
             <div className="flex items-center justify-between mb-8">
                 <Link
-                    href="/forgot-password"
+                    href="/password-reset"
                     className="text-zinc-700 text-sm hover:underline cursor-pointer"
                 >
                     Forgot password?

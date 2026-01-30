@@ -3,12 +3,14 @@
 import OTPInput from "@/components/OTPInput"
 import AuthButton from "../AuthButton"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation";
 
 export default function OTPForm({ primaryText, secondaryText }: { primaryText: string, secondaryText: string }) {
     const [_otpValue, setOtpValue] = useState<Array<string>>(Array.from({ length: 6 }, () => ""),);
     const [apiError, setApiError] = useState<string>("")
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
+    const router = useRouter()
 
     async function handleSubmit(e: React.SubmitEvent) {
         try {
@@ -16,7 +18,7 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
             setLoadingSubmit(true)
 
             const otpValue = _otpValue.join("")
-            const response = await fetch("/api/token/verify", {
+            const response = await fetch("/api/password-reset/verify", {
                 method: "post",
                 credentials: "include",
                 headers: {
@@ -35,7 +37,8 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                 return setApiError(data.message)
             }
 
-            console.log(data)
+            const redirect = data.redirect
+            router.push(redirect)
         } catch (error) {
             setLoadingSubmit(false)
             console.error(error)

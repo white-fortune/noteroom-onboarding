@@ -34,12 +34,14 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
-            const token = await authTokenModel.findOne({ email: body.email, type: "email" })
+            const response = await AuthTokenService.createToken("email", body.email, AuthTokenService.createOTP())
+            //FIXME: check response for errors
             const res = NextResponse.json({ ok: false, needVerification: true })
-            res.cookies.set("email-verification", token.tokenID)
+            res.cookies.set("email-verification", response.token!.tokenID)
             return res
         }
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
     }
 }

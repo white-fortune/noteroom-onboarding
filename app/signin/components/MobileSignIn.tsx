@@ -54,7 +54,7 @@ export default function MobileSignIn() {
                     <div className="flex flex-col gap-3 items-center w-full px-6">
                         <AuthButton label={loadingSubmit ? "Sign In..." : "Sign In"} disabled={loadingSubmit || disabled} />
                         <Link
-                            href="/forgot-password"
+                            href="/password-reset"
                             className="text-sky-500 text-sm font-semibold hover:underline"
                         >
                             Forgotten Password?
