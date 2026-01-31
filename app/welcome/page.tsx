@@ -1,4 +1,9 @@
 import MobileWelcome from "@/components/auth/MobileWelcome";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Welcome"
+}
 
 export default function WelcomePage() {
     return (

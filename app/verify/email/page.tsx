@@ -1,4 +1,9 @@
 import OTPForm from "@/components/verify-email/OTPForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Sign Up"
+}
 
 export default async function VerifyEmailPage() {
     return (

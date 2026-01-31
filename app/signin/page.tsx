@@ -1,5 +1,10 @@
 import MobileSignIn from "./components/MobileSignIn";
 import DesktopSigninForm from "./components/DesktopSignIn";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Sign In"
+}
 
 export default function SigninPage() {
     return (

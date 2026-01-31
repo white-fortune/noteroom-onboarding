@@ -1,3 +1,9 @@
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Password Reset"
+}
+
 export default function PasswordResetLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">

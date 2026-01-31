@@ -1,5 +1,10 @@
 import MobileSignUp from "./components/MobileSignUp";
 import DesktopSignUpForm from "./components/DesktopSignUp";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Sign Up"
+}
 
 export default function SignupPage() {
     return (

@@ -25,13 +25,10 @@ export const metadata: Metadata = {
 	description:
 		"NoteRoom is a knowledge first social media platform built for thinkers to learn, explore ideas, and grow through meaningful content.",
 	keywords: [
-		"NoteRoom",
-		"NoteRoom platform",
-		"NoteRoom learning",
-		"knowledge platform",
-		"intellectual growth",
-		"social learning",
-		"study community",
+		"Login to NoteRoom",
+        "NoteRoom Access",
+        "NoteRoom Login",
+        "NoteRoom Signin"
 	],
 	authors: [{ name: "NoteRoom Team" }],
 	robots: {
