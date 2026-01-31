@@ -4,14 +4,27 @@ import { useEffect, useState } from "react";
 import AuthButton from "../AuthButton";
 import AuthInput from "../AuthInput";
 import { useRouter } from "next/navigation";
+import ResetPasswordSchema, { TResetPasswordForm } from "@/zschema/reset-password";
+import emitErrors from "@/zschema/error";
+
+type TFocusedField = { [K in keyof TResetPasswordForm]: boolean }
 
 export default function PasswordReset() {
-    const [password, setPassword] = useState<string>("")
-    const [confirmPassword, setConfirmPassword] = useState<string>("")
+    const [form, _setForm] = useState<TResetPasswordForm>({ password: "", confirmPassword: "" })
+    const [fieldError, setFieldError] = useState<TResetPasswordForm>({ password: "", confirmPassword: "" })
+    const [focusedField, _setFocusedField] = useState<TFocusedField>({ password: false, confirmPassword: false })
     const [disabled, setDisabled] = useState<boolean>(false)
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [apiMessage, setApiMessage] = useState<{ type: "error" | "success" | null, message: string }>({ type: null, message: "" })
     const router = useRouter()
+
+    function setForm(field: keyof TResetPasswordForm, value: string) {
+        _setForm(prev => ({ ...prev, [field]: value }))
+    }
+
+    function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        _setFocusedField(prev => ({...prev, [field]: state}))
+    }
 
     async function handleSubmit(e: React.SubmitEvent) {
         try {
@@ -23,7 +36,7 @@ export default function PasswordReset() {
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify({ password })
+                body: JSON.stringify({ password: form.password })
             })
             setLoadingSubmit(false)
 
@@ -60,8 +73,17 @@ export default function PasswordReset() {
     }
 
     useEffect(() => {
-        setDisabled(password.trim().length === 0 || confirmPassword.trim().length === 0 || password.trim() !== confirmPassword.trim())
-    }, [password, confirmPassword])
+        const parsedFormData = ResetPasswordSchema.safeParse(form)
+        setDisabled(!parsedFormData.success)
+
+        if (!parsedFormData.success) {
+            const issues = parsedFormData.error.issues
+            const errors = emitErrors<TResetPasswordForm>(issues)
+            setFieldError(errors)
+        } else {
+            setFieldError({ password: "", confirmPassword: "" })
+        }
+    }, [form])
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
@@ -77,16 +99,22 @@ export default function PasswordReset() {
                     name="password" 
                     type="password" 
                     placeholder="Password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={form.password}
+                    onChange={(e) => setForm("password", e.target.value)}
+                    error={focusedField.password ? fieldError.password : ""}
+                    onFocus={() => setFocusedField("password", true)}
+                    onBlur={() => setFocusedField("password", false)}
                 />
 
                 <AuthInput 
                     name="confirm-password" 
                     type="password" 
                     placeholder="Confirm Password" 
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={form.confirmPassword}
+                    onChange={(e) => setForm("confirmPassword", e.target.value)}
+                    error={focusedField.confirmPassword ? fieldError.confirmPassword : ""}
+                    onFocus={() => setFocusedField("confirmPassword", true)}
+                    onBlur={() => setFocusedField("confirmPassword", false)}
                 />
 
                 {apiMessage.message && (

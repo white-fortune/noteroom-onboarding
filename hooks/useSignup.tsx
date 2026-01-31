@@ -1,14 +1,15 @@
 import { StateController } from "@/types/global"
+import emitErrors from "@/zschema/error"
+import SignupSchema, { TSignupForm } from "@/zschema/signup"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export type TSignupForm = {
-    name: string,
-    email: string,
-    password: string
-}
+type TFocusedField = { [K in keyof TSignupForm]: boolean }
+
 export default function useSignup(): {
     form: [TSignupForm, (field: keyof TSignupForm, value: string) => void],
+    fieldError: StateController<TSignupForm>,
+    focusedField: [TFocusedField, (field: keyof TFocusedField, state: boolean) => void]
     apiError: StateController<string>,
     loadingSubmit: StateController<boolean>,
     disabled: boolean,
@@ -19,11 +20,16 @@ export default function useSignup(): {
         email: "",
         password: ""
     })
+    const [fieldError, setFieldError] = useState<TSignupForm>({ email: "", password: "", name: "" })
+    const [focusedField, _setFocusedField] = useState<TFocusedField>({ email: false, password: false, name: false })
     const [apiError, setApiError] = useState<string>("")
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
-
     const router = useRouter()
+
+    function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        _setFocusedField(prev => ({...prev, [field]: state}))
+    }
 
     async function handleSubmit(e: React.SubmitEvent) {
         try {
@@ -61,11 +67,22 @@ export default function useSignup(): {
     }
 
     useEffect(() => {
-        setDisabled(!form.name || !form.password || !form.email)
+        const parsedFormData = SignupSchema.safeParse(form)
+        setDisabled(!parsedFormData.success)
+
+        if (!parsedFormData.success) {
+            const issues = parsedFormData.error.issues
+            const errors = emitErrors<TSignupForm>(issues)
+            setFieldError(errors)
+        } else {
+            setFieldError({ email: "", password: "", name: "" })
+        }
     }, [form])
 
     return {
         form: [form, setForm],
+        fieldError: [fieldError, setFieldError],
+        focusedField: [focusedField, setFocusedField],
         apiError: [apiError, setApiError],
         loadingSubmit: [loadingSubmit, setLoadingSubmit],
         disabled,

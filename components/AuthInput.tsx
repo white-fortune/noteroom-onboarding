@@ -33,39 +33,46 @@ function CloseEyeIcon() {
     )
 }
 
-export default function AuthInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+interface IAuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    error: string
+}
+export default function AuthInput(props: IAuthInputProps) {
     const [focused, setFocused] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
     return (
-        <div className={`
-            flex items-center 
-            rounded-[10px] border border-gray-200 ${focused && "ring-1 ring-sky-500"}`
-        }>
-            <input
-                className={`
-                    w-full h-12 px-4 
-                    border-none 
-                    focus:outline-none 
-                    text-zinc-700 text-sm
-                `}
-                {...props}
-                onFocus={(e) => {
-                    props.onFocus && props.onFocus(e)
-                    setFocused(true)
-                }}
-                onBlur={(e) => {
-                    props.onBlur && props.onBlur(e)
-                    setFocused(false)
-                }}
-                {...(props.type === "password" && { ...(showPassword ? { type: "text" } : { text: "password" }) })}
-            />
+        <div className="flex flex-col gap-2">
+            <div className={`
+                flex items-center 
+                rounded-[10px] border border-gray-200 ${focused && "ring-1 ring-sky-500"}`
+            }>
+                <input
+                    className={`
+                        w-full h-12 px-4 
+                        border-none 
+                        focus:outline-none 
+                        text-zinc-700 text-sm
+                    `}
+                    {...props}
+                    onFocus={(e) => {
+                        props.onFocus && props.onFocus(e)
+                        setFocused(true)
+                    }}
+                    onBlur={(e) => {
+                        props.onBlur && props.onBlur(e)
+                        setFocused(false)
+                    }}
+                    {...(props.type === "password" && { ...(showPassword ? { type: "text" } : { text: "password" }) })}
+                />
 
-            {props.type === "password" && (
-                <a className="mr-3" onClick={() => setShowPassword(prev => !prev)}>
-                    { showPassword ? <CloseEyeIcon /> : <OpenEyeIcon />}
-                </a>
-            )}
+                {props.type === "password" && (
+                    <a className="mr-3" onClick={() => setShowPassword(prev => !prev)}>
+                        { showPassword ? <CloseEyeIcon /> : <OpenEyeIcon />}
+                    </a>
+                )}
+            </div>
+
+            { props.error && <p className="text-red-500 text-[11px] font-medium">{props.error}</p>}
         </div>
     )
 }

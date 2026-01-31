@@ -9,7 +9,16 @@ import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
 
 export default function MobileSignIn() {
-    const {form: [form, setForm], handleSubmit, apiError: [apiError, setApiError], loadingSubmit: [loadingSubmit, setLoadingSubmit], disabled} = useSignin()
+    const {
+        form: [form, setForm], 
+        fieldError: [fieldError], 
+        apiError: [apiError, setApiError], 
+        loadingSubmit: [loadingSubmit, setLoadingSubmit], 
+        focusedField: [focusedField, setFocusedField],
+        handleSubmit, 
+        disabled
+    } = useSignin()
+
 
     return (
         <AnimatePresence mode="wait">
@@ -37,6 +46,9 @@ export default function MobileSignIn() {
                                 placeholder="Email Address" 
                                 value={form.email} 
                                 onChange={(e) => setForm("email", e.target.value)} 
+                                error={focusedField.email ? fieldError.email : ""}
+                                onFocus={() => setFocusedField("email", true)}
+                                onBlur={() => setFocusedField("email", false)}
                             />
                         </div>
 
@@ -47,6 +59,9 @@ export default function MobileSignIn() {
                                 placeholder="Password" 
                                 value={form.password}
                                 onChange={(e) => setForm("password", e.target.value)}
+                                error={focusedField.password ? fieldError.password : ""}
+                                onFocus={() => setFocusedField("password", true)}
+                                onBlur={() => setFocusedField("password", false)}
                             />
                         </div>
                     </div>

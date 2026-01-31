@@ -1,19 +1,22 @@
 import { StateController } from "@/types/global"
+import emitErrors from "@/zschema/error"
+import SigninSchema, { TSigninForm } from "@/zschema/signin"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 
-export type TSigninForm = {
-    email: string,
-    password: string
-}
+type TFocusedField = { [K in keyof TSigninForm]: boolean }
 export default function useSignin(): {
     form: [TSigninForm, (field: keyof TSigninForm, value: string) => void],
     apiError: StateController<string>,
+    fieldError: StateController<TSigninForm>,
+    focusedField: [TFocusedField, (field: keyof TFocusedField, state: boolean) => void]
     loadingSubmit: StateController<boolean>,
     disabled: boolean,
     handleSubmit: (e: React.SubmitEvent) => void
 } {
     const [form, _setForm] = useState<TSigninForm>({ email: "", password: "" })
+    const [fieldError, setFieldError] = useState<TSigninForm>({ email: "", password: "" })
+    const [focusedField, _setFocusedField] = useState<TFocusedField>({ email: false, password: false })
     const [apiError, setApiError] = useState<string>("")
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
@@ -21,6 +24,10 @@ export default function useSignin(): {
 
     function setForm(field: keyof TSigninForm, value: string) {
         _setForm(prev => ({...prev, [field]: value}))
+    }
+
+    function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        _setFocusedField(prev => ({...prev, [field]: state}))
     }
 
     async function handleSubmit(e: React.SubmitEvent) {
@@ -58,12 +65,23 @@ export default function useSignin(): {
     }
 
     useEffect(() => {
-        setDisabled(!form.email || !form.password)
+        const parsedFormData = SigninSchema.safeParse(form)
+        setDisabled(!parsedFormData.success)
+
+        if (!parsedFormData.success) {
+            const issues = parsedFormData.error.issues
+            const errors = emitErrors<TSigninForm>(issues)
+            setFieldError(errors)
+        } else {
+            setFieldError({ email: "", password: "" })
+        }
     }, [form])
 
     return {
         form: [form, setForm],
+        fieldError: [fieldError, setFieldError],
         apiError: [apiError, setApiError],
+        focusedField: [focusedField, setFocusedField],
         loadingSubmit: [loadingSubmit, setLoadingSubmit],
         disabled,
         handleSubmit

@@ -38,6 +38,7 @@ export default function OTPInput({ length, otpValue: [otpValue, setOtpValue] }: 
                     value={otpValue[i]}
                     onChange={(e) => handleOTPValueChange(i, e.target.value)}
                     onPaste={handlePaste}
+                    type="number"
                     className={`
 						caret-sky-600 
 						aspect-square w-full

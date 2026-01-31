@@ -4,12 +4,16 @@ import { useEffect, useState } from "react"
 import AuthButton from "../AuthButton"
 import AuthInput from "../AuthInput"
 import { useRouter } from "next/navigation"
+import { EmailSchema } from "@/zschema/partial"
+import emitErrors from "@/zschema/error"
 
 export default function EmailStageForm() {
     const [email, setEmail] = useState<string>("")
     const [disabled, setDisabled] = useState<boolean>(false)
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [apiError, setApiError] = useState<string>("")
+    const [fieldError, setFieldError] = useState<string>("")
+    const [focusedInput, setFocusedInput] = useState<boolean>(false)
     const router = useRouter()
 
     async function handleSubmit(e: React.SubmitEvent) {
@@ -45,7 +49,16 @@ export default function EmailStageForm() {
     }
 
     useEffect(() => {
-        setDisabled(email.trim().length === 0)
+        const parsedFormData = EmailSchema.safeParse(email)
+        setDisabled(!parsedFormData.success)
+
+        if (!parsedFormData.success) {
+            const issues = parsedFormData.error.issues
+            const errors = emitErrors<{ email: string }>(issues, "email")
+            setFieldError(errors.email)
+        } else {
+            setFieldError("")
+        }
     }, [email])
 
     return (
@@ -65,6 +78,9 @@ export default function EmailStageForm() {
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    error={focusedInput ? fieldError : ""}
+                    onFocus={() => setFocusedInput(true)}
+                    onBlur={() => setFocusedInput(false)}
                 />
             </div>
 

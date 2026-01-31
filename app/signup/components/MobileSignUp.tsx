@@ -9,7 +9,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 
 export default function MobileSignUp() {
-    const { form: [form, setForm], handleSubmit, apiError: [apiError, setApiError], loadingSubmit: [loadingSubmit, setLoadingSubmit], disabled} = useSignup()
+    const {
+        form: [form, setForm], 
+        fieldError: [fieldError], 
+        apiError: [apiError, setApiError], 
+        loadingSubmit: [loadingSubmit, setLoadingSubmit], 
+        focusedField: [focusedField, setFocusedField],
+        handleSubmit, 
+        disabled
+    } = useSignup()
+
 
     return (
         <AnimatePresence mode="wait">
@@ -37,6 +46,9 @@ export default function MobileSignUp() {
                                 placeholder="Full Name"
                                 value={form.name}
                                 onChange={(e) => setForm("name", e.target.value)}
+                                error={focusedField.name ? fieldError.name : ""}
+                                onFocus={() => setFocusedField("name", true)}
+                                onBlur={() => setFocusedField("name", false)}
                             />
                         </div>
 
@@ -47,6 +59,9 @@ export default function MobileSignUp() {
                                 placeholder="Email Address"
                                 value={form.email}
                                 onChange={(e) => setForm("email", e.target.value)}
+                                error={focusedField.email ? fieldError.email : ""}
+                                onFocus={() => setFocusedField("email", true)}
+                                onBlur={() => setFocusedField("email", false)}
                             />
                         </div>
 
@@ -57,6 +72,9 @@ export default function MobileSignUp() {
                                 placeholder="Password"
                                 value={form.password}
                                 onChange={(e) => setForm("password", e.target.value)}
+                                error={focusedField.password ? fieldError.password : ""}
+                                onFocus={() => setFocusedField("password", true)}
+                                onBlur={() => setFocusedField("password", false)}
                             />
                         </div>
                     </div>
