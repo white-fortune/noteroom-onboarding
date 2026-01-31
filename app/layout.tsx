@@ -1,5 +1,6 @@
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css"
+import { Metadata } from "next";
 
 const spaceGrotesk = Space_Grotesk({
 	variable: "--font-space-grotesk",
@@ -14,6 +15,57 @@ const inter = Inter({
 	display: "swap",
 	preload: true,
 });
+
+export const metadata: Metadata = {
+	metadataBase: new URL("https://onboarding.noteroom.co"),
+	title: {
+		default: "NoteRoom | Be Where Ideas Are",
+		template: "%s | NoteRoom",
+	},
+	description:
+		"NoteRoom is a knowledge first social media platform built for thinkers to learn, explore ideas, and grow through meaningful content.",
+	keywords: [
+		"NoteRoom",
+		"NoteRoom platform",
+		"NoteRoom learning",
+		"knowledge platform",
+		"intellectual growth",
+		"social learning",
+		"study community",
+	],
+	authors: [{ name: "NoteRoom Team" }],
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			"max-video-preview": -1,
+			"max-image-preview": "large",
+			"max-snippet": -1,
+		},
+	},
+	openGraph: {
+		title: "NoteRoom | Be Where Ideas Are",
+		description:
+			"NoteRoom is a knowledge first social media platform built for thinkers to learn, explore ideas, and grow through meaningful content.",
+		url: "https://onboarding.noteroom.co",
+		siteName: "NoteRoom",
+		type: "website",
+		locale: "en_US",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "NoteRoom | Be Where Ideas Are",
+		description:
+			"NoteRoom is a knowledge first social media platform built for thinkers to learn, explore ideas, and grow through meaningful content.",
+	},
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "default",
+	},
+};
+
 
 
 export default function RootLayout({
