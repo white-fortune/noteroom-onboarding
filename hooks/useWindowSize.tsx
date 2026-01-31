@@ -7,8 +7,8 @@ type TWindowSize = {
 
 export default function useWindowSize() {
     const [windowSize, setWindowSize] = useState<TWindowSize>({
-        width: window.innerWidth,
-        height: window.innerWidth
+        width: 0,
+        height: 0
     })
 
     useEffect(() => {
@@ -18,6 +18,8 @@ export default function useWindowSize() {
                 height: window.innerWidth
             })
         }
+
+        handleWindowSize()
         window.addEventListener("resize", handleWindowSize)
 
         return () => window.removeEventListener("resize", handleWindowSize)
