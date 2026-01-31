@@ -36,7 +36,15 @@ export async function POST(request: NextRequest) {
 
             const res = NextResponse.json({ ok: true })
             res.cookies.delete("email-verification")
-            res.cookies.set("auth_token", jwtToken)
+            res.cookies.set({
+                name: "auth_token",
+                value: jwtToken,
+                domain: ".noteroom.co",
+                path: "/",
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            })
             return res
         }
 

@@ -24,7 +24,15 @@ export async function POST(request: NextRequest) {
             const jwtToken = JWT.createToken(jwtUser)
 
             const res = NextResponse.json({ ok: true, token: jwtToken })
-            res.cookies.set("auth_token", jwtToken)
+            res.cookies.set({
+                name: "auth_token",
+                value: jwtToken,
+                domain: ".noteroom.co",
+                path: "/",
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            })
 
             return res
         }
