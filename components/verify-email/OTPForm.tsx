@@ -3,16 +3,18 @@
 import OTPInput from "@/components/OTPInput"
 import AuthButton from "../AuthButton"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function OTPForm({ primaryText, secondaryText }: { primaryText: string, secondaryText: string }) {
     const RESEND_TIMEOUT = 20
 
     const [_otpValue, setOtpValue] = useState<Array<string>>(Array.from({ length: 6 }, () => ""),);
-    const [apiError, setApiError] = useState<string>("")
+    const [apiMessage, setApiMessage] = useState<{ type: "error" | "success" | null, message: string }>({ type: null, message: "" })
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
     const [timer, setTimer] = useState<number>(RESEND_TIMEOUT)
     const [loadingResend, setLoadingResend] = useState<boolean>(false)
+    const router = useRouter()
 
     function __resendCodeInterval() {
         const id = setInterval(() => {
@@ -51,15 +53,27 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
             setLoadingSubmit(false)
 
             if (!response.ok) {
-                return setApiError("Unexpected error occurded. Please try again a bit later");
+                return setApiMessage({
+                    type: "error",
+                    message: "Unexpected error occurded. Please try again a bit later"
+                });
             }
 
             const data = await response.json()
             if (!data.ok) {
-                return setApiError(data.message)
+                return setApiMessage({
+                    type: "error",
+                    message: data.message
+                })
             }
 
-            console.log(data)
+            setApiMessage({
+                type: "success",
+                message: "Email verified. Redirecting in 3 seconds..."
+            })
+            setTimeout(() => {
+                router.replace("https://app.noteroom.co")
+            }, 3000)
         } catch (error) {
             setLoadingSubmit(false)
             console.error(error)
@@ -81,19 +95,25 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
             setLoadingResend(false)
 
             if (!response.ok) {
-				return setApiError("Unexpected error occurded. Please try again a bit later");
+				return setApiMessage({
+                    type: "error",
+                    message: "Unexpected error occurded. Please try again a bit later"
+                });
             }
 
             const data = await response.json()
             if (!data.ok) {
-                return setApiError(data.message)
+                return setApiMessage(data.message)
             }
 
             setTimer(20)
             __resendCodeInterval()
         } catch (error) {
             setLoadingResend(false)
-            setApiError("Unexpected error occurded. Please try again a bit later");
+            setApiMessage({
+                type: "error",
+                message: "Unexpected error occurded. Please try again a bit later"
+            });
         }
     }
 
@@ -133,8 +153,8 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                     )}
                 </div>
 
-                {apiError && (
-                    <p className="text-red-500 text-sm text-center">{apiError}</p>
+                {apiMessage.message && (
+                    <p className={`${apiMessage.type === "error" ? "text-red-500" : "text-green-500"} text-sm text-center`}>{apiMessage.message}</p>
                 )}
 
                 <AuthButton label={loadingSubmit ? "Verifing Email..." : "Verify Email"} disabled={loadingSubmit || disabled} />
