@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { PasswordSchema } from "./partial";
+import { StrictPasswordSchema } from "./partial";
 
 const ResetPasswordSchema = z.object({
-    password: PasswordSchema,
+    password: StrictPasswordSchema,
     confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
     message: "Password doesn't match",
