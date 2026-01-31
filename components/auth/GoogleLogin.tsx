@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 declare global {
@@ -10,6 +11,7 @@ declare global {
 
 export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiError: React.Dispatch<React.SetStateAction<string>>, setLoadingSubmit: React.Dispatch<React.SetStateAction<boolean>> }) {
     const GOOGLE_CLIENT_ID = "325870811550-gro5cn5gr2hojv4uuo2isdk4uoqskqi1.apps.googleusercontent.com";
+    const router = useRouter()
 
     async function handleCredentialResponse(gresponse: any) {
         //FIXME: loading and api-error states aren't working
@@ -35,7 +37,7 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
                 return setApiError(data.message)
             }
 
-            console.log(data)
+            router.replace("https://app.noteroom.co")
         } catch (error) {
             setLoadingSubmit(false)
         }
