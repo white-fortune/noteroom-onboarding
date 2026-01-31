@@ -10,7 +10,7 @@ export default function PasswordReset() {
     const [confirmPassword, setConfirmPassword] = useState<string>("")
     const [disabled, setDisabled] = useState<boolean>(false)
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
-    const [apiError, setApiError] = useState<string>("")
+    const [apiMessage, setApiMessage] = useState<{ type: "error" | "success" | null, message: string }>({ type: null, message: "" })
     const router = useRouter()
 
     async function handleSubmit(e: React.SubmitEvent) {
@@ -28,18 +28,34 @@ export default function PasswordReset() {
             setLoadingSubmit(false)
 
             if (!response.ok) {
-				return setApiError("Unexpected error occurded. Please try again a bit later");
+				return setApiMessage({
+                    type: "error",
+                    message: "Unexpected error occurded. Please try again a bit later"
+                });
             }
 
             const data = await response.json()
             if (!data.ok) {
-                return setApiError(data.message)
+                return setApiMessage({
+                    type: "error",
+                    message: data.message
+                })
             }
 
-            router.replace("/signin")
+            setApiMessage({
+                type: "success",
+                message: "Password was reset successfully. Redirecting to login in 3 seconds..."
+            })
+            setDisabled(true)
+            setTimeout(() => {
+                router.replace("/signin")
+            }, 3000)
         } catch (error) {
             setLoadingSubmit(false)
-            setApiError("Unexpected error occurded. Please try again a bit later");
+            setApiMessage({
+                type: "error",
+                message: "Unexpected error occurded. Please try again a bit later"
+            });
         }
     }
 
@@ -73,8 +89,8 @@ export default function PasswordReset() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
 
-                {apiError && (
-                    <p className="text-red-500 text-sm text-center">{apiError}</p>
+                {apiMessage.message && (
+                    <p className={`${apiMessage.type === "error" ? "text-red-500" : "text-green-500"} text-sm text-center`}>{apiMessage.message}</p>
                 )}
 
                 <AuthButton label={loadingSubmit ? "Reseting..." : "Reset"} disabled={disabled || loadingSubmit} />

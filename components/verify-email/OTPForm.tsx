@@ -75,7 +75,8 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                 credentials: "include",
                 headers: {
                     "Content-type": "application/json"
-                }
+                },
+                body: JSON.stringify({ from: window.location.pathname })
             })
             setLoadingResend(false)
 

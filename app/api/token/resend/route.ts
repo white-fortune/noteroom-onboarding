@@ -5,12 +5,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const emailVerificationCookie = request.cookies.get("email-verification")
-        if (!emailVerificationCookie) {
+        const body = await request.json()
+        const pathname = body.from
+
+        let verificationCookie = null
+
+        const verificationCookieKey = pathname === "/verify/email" ? "email-verification" : "password-reset"
+        verificationCookie = request.cookies.get(verificationCookieKey)
+
+        if (!verificationCookie) {
             return NextResponse.json({ ok: false, message: "Invalid verification token" })
         }
         
-        const tokenID = emailVerificationCookie.value
+        const tokenID = verificationCookie.value
 
         await connectToDatabase()
 
@@ -28,7 +35,7 @@ export async function POST(request: NextRequest) {
         })
 
         const res = NextResponse.json({ ok: true })
-        res.cookies.set("email-verification", tokenID)
+        res.cookies.set(verificationCookieKey, tokenID)
         return res
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
