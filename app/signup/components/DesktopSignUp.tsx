@@ -21,7 +21,7 @@ export default function DesktopSignUpForm() {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
             <div className="text-neutral-800 text-2xl font-bold font-space leading-8 mb-8">
-                Create account
+                Sign Up
             </div>
 
             <div className="w-full group mb-6">
