@@ -1,12 +1,18 @@
 import mongoose, { model, models } from "mongoose"
 
+
+const userIdentities = ["teacher", "student", "researcher", "creator"] as const
+export type TUserIdentity = typeof userIdentities[number]
+
 export type TAuthUser = {
     name: string,
     email: string,
     password: string,
     username: string,
     authProvider: string | null,
-    isVerified: boolean
+    isVerified: boolean,
+    identity: TUserIdentity | null,
+    birthDate: Date | null,
 }
 
 const authUserSchema = new mongoose.Schema<TAuthUser>({
@@ -32,6 +38,15 @@ const authUserSchema = new mongoose.Schema<TAuthUser>({
     },
     authProvider: {
         type: String,
+        default: null
+    },
+    identity: {
+        type: String,
+        enum: userIdentities,
+        default: null
+    },
+    birthDate: {
+        type: Date,
         default: null
     }
 })

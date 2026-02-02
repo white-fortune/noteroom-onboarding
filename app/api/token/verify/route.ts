@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
                 secure: true,
                 sameSite: "none",
             })
+            res.cookies.set("onboarding_user", jwtToken)
             return res
         }
 
