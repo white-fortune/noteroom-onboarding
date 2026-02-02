@@ -23,6 +23,7 @@ export default function PasswordReset() {
     }
 
     function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        setApiMessage({ type: null, message: "" })
         _setFocusedField(prev => ({...prev, [field]: state}))
     }
 

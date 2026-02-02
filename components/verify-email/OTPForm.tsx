@@ -134,6 +134,7 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                 <OTPInput
                     length={6}
                     otpValue={[_otpValue, setOtpValue]}
+                    onFocus={() => setApiMessage({ type: null, message: "" })}
                 />
 
                 <div className="text-center">

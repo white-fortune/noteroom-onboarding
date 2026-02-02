@@ -27,6 +27,7 @@ export default function useSignin(): {
     }
 
     function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        setApiError("")
         _setFocusedField(prev => ({...prev, [field]: state}))
     }
 

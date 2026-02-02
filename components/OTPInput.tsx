@@ -6,9 +6,12 @@ import { useRef } from "react";
 interface IOTPInputProps {
     otpValue: StateController<string[]>
     length: number;
+
+    //NOTE: the onfocus in triggered for every otp input field
+    onFocus: (e: React.FocusEvent) => void
 }
 
-export default function OTPInput({ length, otpValue: [otpValue, setOtpValue] }: IOTPInputProps) {
+export default function OTPInput({ length, otpValue: [otpValue, setOtpValue], onFocus }: IOTPInputProps) {
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     function setInputRef(index: number, element: HTMLInputElement) {
@@ -38,6 +41,7 @@ export default function OTPInput({ length, otpValue: [otpValue, setOtpValue] }: 
                     value={otpValue[i]}
                     onChange={(e) => handleOTPValueChange(i, e.target.value)}
                     onPaste={handlePaste}
+                    onFocus={onFocus}
                     className={`
 						caret-sky-600 
 						aspect-square w-full
