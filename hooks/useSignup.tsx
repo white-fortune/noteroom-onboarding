@@ -28,6 +28,7 @@ export default function useSignup(): {
     const router = useRouter()
 
     function setFocusedField(field: keyof TFocusedField, state: boolean) {
+        setApiError("")
         _setFocusedField(prev => ({...prev, [field]: state}))
     }
 

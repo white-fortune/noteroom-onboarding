@@ -79,7 +79,10 @@ export default function EmailStageForm() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     error={focusedInput ? fieldError : ""}
-                    onFocus={() => setFocusedInput(true)}
+                    onFocus={() => {
+                        setFocusedInput(true)
+                        setApiError("")
+                    }}
                     onBlur={() => setFocusedInput(false)}
                 />
             </div>

@@ -65,7 +65,7 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
             router.push(redirect)
         } catch (error) {
             setLoadingSubmit(false)
-            console.error(error)
+            setApiError("Unexpected error occurded. Please try again a bit later");
         }
     }
 
@@ -117,6 +117,7 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                 <OTPInput
                     length={6}
                     otpValue={[_otpValue, setOtpValue]}
+                    onFocus={() => setApiError("")}
                 />
 
                 <div className="text-center">
