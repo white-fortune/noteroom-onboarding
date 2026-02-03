@@ -40,10 +40,19 @@ const IDENTITY_OPTIONS: IdentityOption[] = [
     }
 ]
 
+const INTERESTS = [
+    "Technology", "Music", "Science", "Travelling", "Art", "Sports", 
+    "Cooking", "Photography", "Business", "Fashion", "Gaming", 
+    "History", "Movies", "Reading", "Health", "Nature", "Finance",
+    "Design", "Marketing", "Psychology"
+]
+
 export default function OnboardPage() {
     const [step, setStep] = useState<Step>(1)
     const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null)
     const [identity, setIdentity] = useState<IdentityOption["id"] | null>(null)
+    const [interests, setInterests] = useState<string[]>([])
+    
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -87,14 +96,23 @@ export default function OnboardPage() {
     const handleIdentityContinue = async () => {
         if (!identity) return
         const success = await saveOnboardingData({ identity })
+        if (success) setStep(3)
+    }
+
+    const handleInterestsContinue = async () => {
+        const success = await saveOnboardingData({ interests })
         if (success) {
-            alert("Identity saved!")
-            // setStep(3) // Move to Interests step when implemented
+            // Final Step Complete -> Redirect to main app
+            window.location.href = "https://app.noteroom.co"
         }
     }
 
-    const handleSkipIdentity = () => {
-        setStep(3)
+    const toggleInterest = (topic: string) => {
+        setInterests(prev => 
+            prev.includes(topic) 
+                ? prev.filter(t => t !== topic) 
+                : [...prev, topic]
+        )
     }
 
     return (
@@ -188,7 +206,7 @@ export default function OnboardPage() {
                                     loading={loading}
                                 />
                                 <button 
-                                    onClick={handleSkipIdentity}
+                                    onClick={() => setStep(3)}
                                     className="w-full text-center text-gray-800/70 text-sm font-normal font-['Inter'] underline hover:text-gray-900 transition-colors"
                                 >
                                     Skip for now
@@ -203,11 +221,57 @@ export default function OnboardPage() {
                         key="step3"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-center p-8 bg-white rounded-2xl shadow-sm"
+                        className="w-full max-w-[620px] flex flex-col gap-6 md:gap-8 relative"
                     >
-                        <h1 className="text-2xl font-bold mb-4">Interests Step Coming Soon</h1>
-                        <p className="text-gray-500 mb-6">We're building the best experience for you.</p>
-                        <button onClick={handleBack} className="text-sky-600 font-semibold hover:underline">Go Back</button>
+                        {/* Back Button */}
+                        <button onClick={handleBack} className="group flex items-end gap-1 cursor-pointer w-fit mb-2">
+                            <BackIcon />
+                            <div className="text-zinc-600 text-base md:text-xl font-normal font-['Inter']">Back</div>
+                        </button>
+
+                        <div className="w-full space-y-3.5">
+                            <div className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']">Personalize your feed</div>
+                            <div className="space-y-1">
+                                <h1 className="text-3xl md:text-4xl font-bold font-['Inter'] text-zinc-800">What topics interest you?</h1>
+                                <p className="text-neutral-400 text-lg md:text-xl font-medium font-['Inter']">Select as many as you want</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-8 md:gap-10">
+                            {/* Interest Cloud */}
+                            <div className="flex flex-wrap gap-2.5">
+                                {INTERESTS.map((topic) => (
+                                    <button
+                                        key={topic}
+                                        onClick={() => toggleInterest(topic)}
+                                        className={`
+                                            px-6 py-2.5 rounded-md border-[1.23px] text-base transition-all
+                                            ${interests.includes(topic) 
+                                                ? 'bg-sky-600 border-sky-600 text-white shadow-md' 
+                                                : 'bg-white border-black/10 text-black hover:border-black/30'
+                                            }
+                                        `}
+                                    >
+                                        {topic}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                {error && <ErrorMsg message={error} />}
+                                <ContinueButton 
+                                    onClick={handleInterestsContinue} 
+                                    disabled={loading} 
+                                    loading={loading}
+                                />
+                                <button 
+                                    onClick={() => window.location.href = "https://app.noteroom.co"}
+                                    className="w-full text-center text-gray-800/70 text-sm font-normal font-['Inter'] underline hover:text-gray-900 transition-colors"
+                                >
+                                    Skip for now
+                                </button>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -256,6 +320,7 @@ function ContinueButton({ onClick, disabled, loading }: { onClick: () => void, d
         </motion.button>
     )
 }
+
 
 function BackIcon() {
     return (
