@@ -41,10 +41,11 @@ const IDENTITY_OPTIONS: IdentityOption[] = [
 ]
 
 const INTERESTS = [
-    "Technology", "Music", "Science", "Travelling", "Art", "Sports", 
+    "Travelling", "Music", "Science", "Technology", "Art", "Sports", 
     "Cooking", "Photography", "Business", "Fashion", "Gaming", 
     "History", "Movies", "Reading", "Health", "Nature", "Finance",
-    "Design", "Marketing", "Psychology"
+    "Design", "Marketing", "Psychology", "Politics", "Writing",
+    "Productivity", "Journaling"
 ]
 
 export default function OnboardPage() {
@@ -238,22 +239,15 @@ export default function OnboardPage() {
                         </div>
 
                         <div className="flex flex-col gap-8 md:gap-10">
-                            {/* Interest Cloud */}
-                            <div className="flex flex-wrap gap-2.5">
+                            {/* Interest Cloud - Dynamic and Professional */}
+                            <div className="flex flex-wrap gap-2 md:gap-3 justify-start items-center overflow-x-hidden">
                                 {INTERESTS.map((topic) => (
-                                    <button
+                                    <InterestPill 
                                         key={topic}
+                                        topic={topic}
+                                        selected={interests.includes(topic)}
                                         onClick={() => toggleInterest(topic)}
-                                        className={`
-                                            px-6 py-2.5 rounded-md border-[1.23px] text-base transition-all
-                                            ${interests.includes(topic) 
-                                                ? 'bg-sky-600 border-sky-600 text-white shadow-md' 
-                                                : 'bg-white border-black/10 text-black hover:border-black/30'
-                                            }
-                                        `}
-                                    >
-                                        {topic}
-                                    </button>
+                                    />
                                 ))}
                             </div>
 
@@ -276,6 +270,24 @@ export default function OnboardPage() {
                 )}
             </AnimatePresence>
         </div>
+    )
+}
+
+function InterestPill({ topic, selected, onClick }: { topic: string, selected: boolean, onClick: () => void }) {
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                h-11 px-8 min-w-[120px] bg-white rounded-md border-[1.23px] transition-all flex items-center justify-center text-base font-normal font-['Inter']
+                ${selected 
+                    ? 'bg-sky-600 border-sky-600 text-white shadow-md' 
+                    : 'border-black/10 text-black hover:border-black/30'
+                }
+                active:scale-[0.97]
+            `}
+        >
+            {topic}
+        </button>
     )
 }
 
