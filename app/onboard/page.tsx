@@ -98,7 +98,7 @@ export default function OnboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-stone-100 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-stone-100 flex flex-col items-center justify-center p-4 md:p-8">
             <AnimatePresence mode="wait">
                 {step === 1 && (
                     <motion.div
@@ -106,26 +106,26 @@ export default function OnboardPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="w-full max-w-[589px] flex flex-col gap-11"
+                        className="w-full max-w-[589px] flex flex-col gap-8 md:gap-11"
                     >
                         {/* Header Step 1 */}
-                        <div className="flex flex-col gap-6 w-full">
+                        <div className="flex flex-col gap-4 md:gap-6 w-full">
                             <Link href="/signup" className="group flex items-end gap-1 cursor-pointer w-fit">
                                 <BackIcon />
-                                <div className="text-zinc-600 text-xl font-normal font-['Inter']">Back</div>
+                                <div className="text-zinc-600 text-lg md:text-xl font-normal font-['Inter']">Back</div>
                             </Link>
                             <div className="w-full">
-                                <span className="text-neutral-400 text-xl font-bold font-['Inter']">Nice to meet you, </span>
-                                <span className="text-black text-xl font-bold font-['Inter']">Jalal!</span>
-                                <span className="text-neutral-400 text-xl font-bold font-['Inter']"> 👋 Let’s set things up.</span>
+                                <span className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']">Nice to meet you, </span>
+                                <span className="text-black text-lg md:text-xl font-bold font-['Inter']">Jalal!</span>
+                                <span className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']"> 👋 Let’s set things up.</span>
                             </div>
                         </div>
 
                         {/* Content Step 1 */}
-                        <div className="w-full flex flex-col gap-8">
+                        <div className="w-full flex flex-col gap-6 md:gap-8">
                             <div className="flex flex-col gap-1.5">
-                                <h1 className="text-zinc-800 text-4xl font-bold font-['Inter']">Date of birth</h1>
-                                <p className="text-neutral-400 text-xl font-medium font-['Inter']">
+                                <h1 className="text-zinc-800 text-3xl md:text-4xl font-bold font-['Inter']">Date of birth</h1>
+                                <p className="text-neutral-400 text-lg md:text-xl font-medium font-['Inter']">
                                     Used only to personalize your experience. Not shown publicly.
                                 </p>
                             </div>
@@ -148,23 +148,23 @@ export default function OnboardPage() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="w-full max-w-[589px] flex flex-col gap-8 relative"
+                        className="w-full max-w-[620px] flex flex-col gap-6 md:gap-8 relative"
                     >
                         {/* Back Button */}
-                        <button onClick={handleBack} className="group flex items-end gap-1 cursor-pointer w-fit mb-3">
+                        <button onClick={handleBack} className="group flex items-end gap-1 cursor-pointer w-fit mb-2">
                             <BackIcon />
-                            <div className="text-zinc-600 text-xl font-normal font-['Inter']">Back</div>
+                            <div className="text-zinc-600 text-base md:text-xl font-normal font-['Inter']">Back</div>
                         </button>
 
                         <div className="w-full">
-                            <h1 className="text-zinc-800 text-4xl font-bold font-['Inter'] leading-tight">
+                            <h1 className="text-xl md:text-4xl font-bold font-['Inter'] leading-tight text-zinc-800">
                                 How would you like to introduce yourself?
                             </h1>
                         </div>
 
-                        <div className="flex flex-col gap-10">
-                            <div className="flex flex-col gap-5">
-                                <div className="grid grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-6 md:gap-10">
+                            <div className="flex flex-col gap-4 md:gap-6">
+                                <div className="grid grid-cols-2 gap-3 md:gap-6">
                                     {IDENTITY_OPTIONS.slice(0, 4).map((opt) => (
                                         <IdentityCard 
                                             key={opt.id} 
@@ -173,13 +173,10 @@ export default function OnboardPage() {
                                             onClick={() => setIdentity(opt.id)} 
                                         />
                                     ))}
-                                </div>
-                                <div className="w-1/2">
                                     <IdentityCard 
                                         option={IDENTITY_OPTIONS[4]} 
                                         selected={identity === "other"} 
                                         onClick={() => setIdentity("other")} 
-                                        fullHeight={true}
                                     />
                                 </div>
                             </div>
@@ -206,10 +203,11 @@ export default function OnboardPage() {
                         key="step3"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-center"
+                        className="text-center p-8 bg-white rounded-2xl shadow-sm"
                     >
-                        <h1 className="text-2xl font-bold">Interests Step Coming Soon</h1>
-                        <button onClick={handleBack} className="mt-4 text-sky-600 underline">Go Back</button>
+                        <h1 className="text-2xl font-bold mb-4">Interests Step Coming Soon</h1>
+                        <p className="text-gray-500 mb-6">We're building the best experience for you.</p>
+                        <button onClick={handleBack} className="text-sky-600 font-semibold hover:underline">Go Back</button>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -217,22 +215,23 @@ export default function OnboardPage() {
     )
 }
 
-function IdentityCard({ option, selected, onClick }: { option: IdentityOption, selected: boolean, onClick: () => void, fullHeight?: boolean }) {
+function IdentityCard({ option, selected, onClick }: { option: IdentityOption, selected: boolean, onClick: () => void }) {
     return (
         <div 
             onClick={onClick}
             className={`
-                w-full h-36 px-4 py-3.5 bg-white rounded-2xl cursor-pointer transition-all duration-200
+                w-full h-auto min-h-[110px] md:min-h-[144px] px-3 py-3 md:px-4 md:py-4 bg-white rounded-xl md:rounded-2xl cursor-pointer transition-all duration-200
                 shadow-[0px_0px_2.4697303771972656px_0px_rgba(0,0,0,0.25)]
-                flex flex-col justify-start items-start gap-3
+                flex flex-col justify-start items-start gap-1 md:gap-2.5
                 border-2 ${selected ? 'border-sky-600' : 'border-transparent'}
                 hover:shadow-md hover:translate-y-[-2px]
+                active:scale-[0.98]
             `}
         >
-            <div className={`self-stretch h-6 text-xl font-bold font-['Inter'] ${selected ? 'text-sky-600' : 'text-gray-800'}`}>
+            <div className={`self-stretch text-base md:text-xl font-bold font-['Inter'] ${selected ? 'text-sky-600' : 'text-gray-800'}`}>
                 {option.title}
             </div>
-            <div className="self-stretch text-zinc-700 text-base font-normal font-['Inter'] leading-tight">
+            <div className="self-stretch text-zinc-700 text-xs md:text-base font-normal font-['Inter'] leading-tight md:leading-snug">
                 {option.description}
             </div>
         </div>
@@ -251,7 +250,7 @@ function ContinueButton({ onClick, disabled, loading }: { onClick: () => void, d
                 ${!disabled ? 'bg-sky-600 shadow-lg cursor-pointer' : 'bg-gray-300 cursor-not-allowed'}
             `}
         >
-            <span className="text-white text-xl font-medium font-['Inter']">
+            <span className="text-white text-lg md:text-xl font-medium font-['Inter']">
                 {loading ? "Saving..." : "Continue"}
             </span>
         </motion.button>
