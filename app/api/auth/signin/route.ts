@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
                 secure: true,
                 sameSite: "none",
             })
+            res.cookies.set("onboarding_user", jwtToken)
 
             return res
         }
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
             const response = await AuthTokenService.createToken("email", body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
-            } 
+            }
 
             const token = response.token!
             await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {

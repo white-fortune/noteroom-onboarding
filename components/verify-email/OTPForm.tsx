@@ -72,7 +72,7 @@ export default function OTPForm({ primaryText, secondaryText }: { primaryText: s
                 message: "Email verified. Redirecting in 3 seconds..."
             })
             setTimeout(() => {
-                router.replace("https://app.noteroom.co")
+                router.replace("/onboard")
             }, 3000)
         } catch (error) {
             setLoadingSubmit(false)
