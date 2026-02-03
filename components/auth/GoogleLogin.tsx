@@ -37,7 +37,7 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
                 return setApiError(data.message)
             }
 
-            router.replace("https://app.noteroom.co")
+            router.replace("/onboard")
         } catch (error) {
             setLoadingSubmit(false)
         }

@@ -1,7 +1,7 @@
 import mongoose, { model, models } from "mongoose"
 
 
-const userIdentities = ["teacher", "student", "researcher", "creator"] as const
+const userIdentities = ["teacher", "student", "researcher", "creator", "other"] as const
 export type TUserIdentity = typeof userIdentities[number]
 
 export type TAuthUser = {
@@ -50,7 +50,7 @@ const authUserSchema = new mongoose.Schema<TAuthUser>({
         default: null
     }
 })
-authUserSchema.pre("save", function() {
+authUserSchema.pre("save", function () {
     if (!this.isNew) return
 
     if (this.authProvider) {
