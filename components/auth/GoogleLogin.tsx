@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 
 declare global {
     interface Window {
@@ -12,6 +12,7 @@ declare global {
 export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiError: React.Dispatch<React.SetStateAction<string>>, setLoadingSubmit: React.Dispatch<React.SetStateAction<boolean>> }) {
     const GOOGLE_CLIENT_ID = "325870811550-gro5cn5gr2hojv4uuo2isdk4uoqskqi1.apps.googleusercontent.com";
     const router = useRouter()
+    const id = `google-signin-${useId()}`
 
     async function handleCredentialResponse(gresponse: any) {
         //FIXME: loading and api-error states aren't working
@@ -62,11 +63,10 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
             });
 
             window["google"].accounts.id.renderButton(
-                document.getElementById("google-signin-btn"),
+                document.getElementById(id),
                 {
                     theme: "outline",
                     size: "large",
-                    width: 384, // This should match the w-96 (24rem = 384px) parent
                 },
             );
 
@@ -75,26 +75,8 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
     }, []);
 
     return (
-        <div className="relative w-full h-12">
-            {/* Custom Button from Design */}
-            <div className="absolute inset-0 bg-white rounded-md outline -outline-offset-1 outline-slate-200 flex items-center justify-center gap-3 pointer-events-none">
-                <div className="w-6 h-6 relative overflow-hidden flex items-center justify-center">
-                    <img
-                        src="https://app.noteroom.co/google.png"
-                        alt="Google Logo"
-                        className="w-5.5 h-5.5 object-contain"
-                    />
-                </div>
-                <span className="text-slate-600 text-base font-medium font-inter leading-6">
-                    Sign in with Google
-                </span>
-            </div>
-
-            {/* Invisible Standard GSI Button Overlay */}
-            <div
-                id="google-signin-btn"
-                className="opacity-0 absolute inset-0 [&>div]:w-full [&>div]:h-full [&_iframe]:w-full [&_iframe]:h-full overflow-hidden"
-            ></div>
+        <div className="flex w-full justify-center">
+            <div id={id}></div>
         </div>
     )
 }
