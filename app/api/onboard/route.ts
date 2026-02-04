@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
             res.cookies.set({
                 name: "auth_token",
                 value: jwtToken,
-                domain: ".noteroom.co",
+                domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
                 path: "/",
                 httpOnly: true,
                 secure: true,

@@ -39,27 +39,40 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        const jwtUser = {
-            email: user.email,
-            name: user.name,
-            username: user.username,
-            _id: user._id
+        if (user.onboarded) {
+            const jwtUser = {
+                email: user.email,
+                name: user.name,
+                username: user.username,
+                _id: user._id
+            }
+            const jwtToken = JWT.createToken(jwtUser)
+    
+            const res = NextResponse.json({ ok: true })
+            res.cookies.set({
+                name: "auth_token",
+                value: jwtToken,
+                domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
+                path: "/",
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            })
+
+            return res
+        } else {
+            const jwtOnboardingUser = {
+                email: user.email,
+                name: user.name,
+                _id: user._id
+            }
+            const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser)
+
+            const res = NextResponse.json({ ok: false, needOnboarding: true })
+            res.cookies.set("onboarding-user", jwtOnboardingUserToken)
+            
+            return res
         }
-        const jwtToken = JWT.createToken(jwtUser)
-
-        const res = NextResponse.json({ ok: true, token: jwtToken })
-        res.cookies.set({
-            name: "auth_token",
-            value: jwtToken,
-            domain: ".noteroom.co",
-            path: "/",
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-        })
-        res.cookies.set("onboarding_user", jwtToken)
-
-        return res
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });
     }

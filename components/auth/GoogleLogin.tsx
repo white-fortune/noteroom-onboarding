@@ -34,10 +34,13 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
 
             const data = await response.json()
             if (!data.ok) {
+                if (data.needOnboarding) {
+                    return router.replace("/onboard")
+                }
                 return setApiError(data.message)
             }
 
-            router.replace("/onboard")
+            //go to app
         } catch (error) {
             setLoadingSubmit(false)
         }
