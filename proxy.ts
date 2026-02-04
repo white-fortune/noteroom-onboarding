@@ -14,11 +14,16 @@ export function proxy(request: NextRequest) {
         if (!emailVerificationCookie) {
             return NextResponse.redirect(new URL("/signin", request.url))
         }
+    } else if (pathname === "/onboard") {
+        const onboardingUserCookie = request.cookies.get("onboarding-user")
+        if (!onboardingUserCookie) {
+            return NextResponse.redirect(new URL("/signup", request.url))
+        }
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/password-reset/reset", "/password-reset/otp", "/verify/email"]
+    matcher: ["/password-reset/reset", "/password-reset/otp", "/verify/email", "/onboard"]
 };

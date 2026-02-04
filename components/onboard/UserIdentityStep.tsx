@@ -1,11 +1,10 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState } from "react"
 import ContinueButton from "./ContinueButton"
 import BackButton from "./BackButton"
-import { Step, useOnboardingContext } from "@/app/onboard/page"
 import SkipForNowButton from "./SkipForNowButton"
+import { Step, useOnboardingContext } from "./OnboardingClient"
 
 type IdentityOption = {
     id: "teacher" | "student" | "researcher" | "creator" | "other"

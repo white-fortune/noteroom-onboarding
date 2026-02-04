@@ -1,3 +1,5 @@
+"use client"
+
 export default function BackButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
     return (
         <button className="group flex items-center gap-1 cursor-pointer w-fit" {...props}>

@@ -1,13 +1,14 @@
 "use client"
 
-import { motion } from "framer-motion"
 import ContinueButton from "./ContinueButton"
 import BackButton from "./BackButton"
-import { Step, useOnboardingContext } from "@/app/onboard/page"
 import { useRouter } from "next/navigation"
+import { Step, useOnboardingContext } from "@/components/onboard/OnboardingClient"
+import { JwtPayload } from "jsonwebtoken"
+import { motion } from "framer-motion"
 
-export default function DOBStep() {
-    const { onboardingData: [onboardingData, setOnboardingData ], step: [, setStep]} = useOnboardingContext()!
+export default function DOBStep({ user }: { user: JwtPayload }) {
+    const { onboardingData: [onboardingData, setOnboardingData], step: [, setStep] } = useOnboardingContext()!
     const router = useRouter()
 
     return (
@@ -23,7 +24,7 @@ export default function DOBStep() {
             <div className="flex flex-col gap-4 md:gap-6 w-full">
                 <div className="w-full">
                     <span className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']">Nice to meet you, </span>
-                    <span className="text-black text-lg md:text-xl font-bold font-['Inter']">Jalal!</span>
+                    <span className="text-black text-lg md:text-xl font-bold font-['Inter']">{user.name}</span>
                     <span className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']"> 👋 Let's set things up.</span>
                 </div>
             </div>

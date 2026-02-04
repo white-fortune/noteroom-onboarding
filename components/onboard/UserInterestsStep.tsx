@@ -3,10 +3,10 @@
 import { motion } from "framer-motion"
 import ContinueButton from "./ContinueButton"
 import BackButton from "./BackButton"
-import { Step, useOnboardingContext } from "@/app/onboard/page"
 import SkipForNowButton from "./SkipForNowButton"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { Step, useOnboardingContext } from "./OnboardingClient"
 
 const INTERESTS = [
     "Travelling", "Music", "Science", "Technology", "Art", "Sports",
