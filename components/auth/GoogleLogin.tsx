@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 
 declare global {
     interface Window {
@@ -12,6 +12,7 @@ declare global {
 export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiError: React.Dispatch<React.SetStateAction<string>>, setLoadingSubmit: React.Dispatch<React.SetStateAction<boolean>> }) {
     const GOOGLE_CLIENT_ID = "325870811550-gro5cn5gr2hojv4uuo2isdk4uoqskqi1.apps.googleusercontent.com";
     const router = useRouter()
+    const googleSigninButtonID = `google-signin-${useId()}`
 
     async function handleCredentialResponse(gresponse: any) {
         //FIXME: loading and api-error states aren't working
@@ -62,15 +63,13 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
             });
 
             window["google"].accounts.id.renderButton(
-                document.getElementById("google-signin-btn"),
+                document.getElementById(googleSigninButtonID),
                 {
                     theme: "outline",
                     size: "large",
                     width: 384, // This should match the w-96 (24rem = 384px) parent
                 },
             );
-
-            window["google"].accounts.id.prompt();
         };
     }, []);
 
@@ -92,8 +91,8 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
 
             {/* Invisible Standard GSI Button Overlay */}
             <div
-                id="google-signin-btn"
-                className="opacity-0 absolute inset-0 [&>div]:w-full [&>div]:h-full [&_iframe]:w-full [&_iframe]:h-full overflow-hidden"
+                id={googleSigninButtonID}
+                className="google-signin-btn opacity-0 absolute inset-0 [&>div]:w-full [&>div]:h-full [&_iframe]:w-full [&_iframe]:h-full overflow-hidden"
             ></div>
         </div>
     )
