@@ -38,7 +38,12 @@ export default function DOBStep({ user }: { user: JwtPayload }) {
                     </p>
                 </div>
                 <div className="flex flex-col gap-7">
-                    <input className="font-medium text-lg border p-4" type="date" value={onboardingData.dob} onChange={(e) => setOnboardingData(prev => ({ ...prev, dob: e.target.value }))} />
+                    <div className="flex justify-between items-center text-zinc-600 font-semibold font-['Inter'] border-b py-2 border-neutral-400">
+                        <span className="text-xl max-lg:text-sm">Pick your date of birth:</span>
+                        <div className="relative inset-0 cursor-pointer">
+                            <input className="border p-2 px-4 outline-none rounded" type="date" value={onboardingData.dob} onChange={(e) => setOnboardingData(prev => ({ ...prev, dob: e.target.value }))} />
+                        </div>
+                    </div>
                     <ContinueButton onClick={() => setStep(Step.UserIdentity)} disabled={!onboardingData.dob} />
                 </div>
             </div>
