@@ -11,6 +11,7 @@ export type TAuthUser = {
     username: string,
     authProvider: string | null,
     isVerified: boolean,
+    onboarded: boolean,
     identity: TUserIdentity | null,
     birthDate: Date | null,
 }
@@ -33,6 +34,10 @@ const authUserSchema = new mongoose.Schema<TAuthUser>({
         required: true
     },
     isVerified: {
+        type: Boolean,
+        default: false
+    },
+    onboarded: {
         type: Boolean,
         default: false
     },

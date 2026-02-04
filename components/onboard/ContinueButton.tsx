@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 
-export default function ContinueButton({ onClick, disabled }: { onClick?: () => void, disabled: boolean }) {
+export default function ContinueButton({ onClick, disabled, loading }: { onClick?: () => void, disabled: boolean, loading?: boolean }) {
     return (
         <motion.button
             whileHover={!disabled ? { scale: 1.01 } : {}}
@@ -15,7 +15,7 @@ export default function ContinueButton({ onClick, disabled }: { onClick?: () => 
             disabled={disabled}
         >
             <span className="text-white text-lg md:text-xl font-medium font-['Inter']">
-                Continue
+                { loading ? "Onboarding..." : "Continue" }
             </span>
         </motion.button>
     )

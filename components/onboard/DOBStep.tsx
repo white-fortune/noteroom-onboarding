@@ -37,7 +37,7 @@ export default function DOBStep() {
                     </p>
                 </div>
                 <div className="flex flex-col gap-7">
-                    <input type="date" value={onboardingData.dob} onChange={(e) => setOnboardingData(prev => ({ ...prev, dob: e.target.value }))} />
+                    <input className="font-medium text-lg border p-4" type="date" value={onboardingData.dob} onChange={(e) => setOnboardingData(prev => ({ ...prev, dob: e.target.value }))} />
                     <ContinueButton onClick={() => setStep(Step.UserIdentity)} disabled={!onboardingData.dob} />
                 </div>
             </div>

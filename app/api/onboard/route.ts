@@ -6,14 +6,23 @@ import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export type TOnboardData = {
-    birthDate: Date | null, //NOTE: already parsed date from client
+    dob: string | null,
     identity: TUserIdentity | null,
     interests: string[]
 }
 
+function __parseDate(dateStr: string | null) {
+    if (!dateStr) return null
+
+    //NOTE: dateStr = "YYYY-MM-DD", got from the date input
+    const [year, month, day] = dateStr.split("-").map(Number)
+    return new Date(Date.UTC(year, month - 1, day))
+}
+
+
 export async function POST(request: NextRequest) {
     try {
-        const onboardingUserCookie = request.cookies.get("onboarding_user")
+        const onboardingUserCookie = request.cookies.get("onboarding-user")
         if (!onboardingUserCookie) {
             return NextResponse.json({ ok: false, message: "Invalid user" })
         }
@@ -23,13 +32,11 @@ export async function POST(request: NextRequest) {
         if (!user) {
             return NextResponse.json({ ok: false, message: "Invalid user" })
         }
-
+        
         const body = await request.json() as TOnboardData
-        await connectToDatabase()
+        const res = NextResponse.json({ ok: true })
 
-        if (body.birthDate || body.identity) {
-            await authUserModel.updateOne({ email: (user as JwtPayload).email }, { $set: { birthDate: body.birthDate, identity: body.identity } })
-        }
+        await connectToDatabase()
 
         if (body.interests) {
             await userInterestsModel.updateOne(
@@ -39,7 +46,32 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        return NextResponse.json({ ok: true })
+        if (body.dob || body.identity) {
+            const updatedUser = await authUserModel.findOneAndUpdate(
+                { email: (user as JwtPayload).email }, 
+                { $set: { birthDate: __parseDate(body.dob), identity: body.identity, onboarded: true } },
+                { new: true }
+            )
+            const jwtUser = {
+                email: updatedUser.email,
+                name: updatedUser.name,
+                username: updatedUser.username,
+                _id: updatedUser._id
+            }
+            const jwtToken = JWT.createToken(jwtUser)
+            res.cookies.delete("onboarding-user")
+            res.cookies.set({
+                name: "auth_token",
+                value: jwtToken,
+                domain: ".noteroom.co",
+                path: "/",
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            })
+        }
+
+        return res
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
     }

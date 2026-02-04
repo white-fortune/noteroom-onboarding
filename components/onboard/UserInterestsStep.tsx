@@ -5,6 +5,8 @@ import ContinueButton from "./ContinueButton"
 import BackButton from "./BackButton"
 import { Step, useOnboardingContext } from "@/app/onboard/page"
 import SkipForNowButton from "./SkipForNowButton"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 const INTERESTS = [
     "Travelling", "Music", "Science", "Technology", "Art", "Sports",
@@ -16,18 +18,50 @@ const INTERESTS = [
 
 
 export default function UserInterestsStep() {
-    const { onboardingData: [onboardingData, setOnboardingData], step: [, setStep]} = useOnboardingContext()!
+    const { onboardingData: [onboardingData, setOnboardingData], step: [, setStep] } = useOnboardingContext()!
+    const [apiError, setApiError] = useState<string>("")
+    const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
+    const router = useRouter()
 
-    function handleSubmit(clearInterests: boolean = false) {
+    async function handleSubmit(clearInterests: boolean = false) {
         let data = onboardingData
 
         if (clearInterests) {
             setOnboardingData(prev => ({ ...prev, interests: [] }))
-            data = {...onboardingData, interests: []}
+            data = { ...onboardingData, interests: [] }
         }
 
-        console.log(data)
+        try {
+            setLoadingSubmit(true)
+            const response = await fetch("/api/onboard", {
+                method: "post",
+                credentials: "include",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(onboardingData)
+            })
+            setLoadingSubmit(false)
+
+            if (!response.ok) {
+                return setApiError("Unexpected error occurded. Please try again a bit later");
+            }
+
+            const respData = await response.json()
+            if (!respData.ok) {
+                return setApiError(respData.message)
+            }
+
+            router.replace("https://app.noteroom.co")
+        } catch (error) {
+            setLoadingSubmit(true)
+            return setApiError("Unexpected error occurded. Please try again a bit later");
+        }
     }
+
+    useEffect(() => {
+        setApiError("")
+    }, [onboardingData])
 
     return (
         <motion.div
@@ -53,13 +87,16 @@ export default function UserInterestsStep() {
                             key={topic}
                             topic={topic}
                             selected={onboardingData.interests.includes(topic)}
-                            onClick={() => setOnboardingData(prev => ({ ...prev, interests: [...new Set([...prev.interests, topic])] })) }
+                            onClick={() => setOnboardingData(prev => ({ ...prev, interests: [...new Set([...prev.interests, topic])] }))}
                         />
                     ))}
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    <ContinueButton onClick={() => handleSubmit()} disabled={onboardingData.interests.length === 0} />
+                    {apiError && (
+                        <p className="text-red-500 text-sm text-center mb-4">{apiError}</p>
+                    )}
+                    <ContinueButton onClick={() => handleSubmit()} loading={loadingSubmit} disabled={loadingSubmit || onboardingData.interests.length === 0} />
                     <SkipForNowButton onClick={() => {
                         //NOTE: even if the user selects something, skiping will remove it
                         handleSubmit(true)
