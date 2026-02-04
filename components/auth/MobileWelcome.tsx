@@ -2,10 +2,11 @@
 
 import useWindowSize from "@/hooks/useWindowSize"
 import { motion } from "framer-motion"
+import { JwtPayload } from "jsonwebtoken"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-export default function MobileWelcome() {
+export default function MobileWelcome({ user }: { user: JwtPayload | null }) {
     const { width } = useWindowSize()
     const router = useRouter()
 
@@ -75,6 +76,27 @@ export default function MobileWelcome() {
                         </a>
                     </p>
                 </div>
+
+                {user && (
+                    <>
+                        <Link
+                            href={"https://app.noteroom.co"}
+                            className="flex items-center justify-center rounded-3xl bg-white border border-sky-500 px-7 py-2.5 text-sky-500 text-base font-medium w-full hover:bg-sky-50 transition-all active:scale-[0.98]"
+
+                        >
+                            Continue as {user.name}
+                        </Link>
+
+                        <div className="w-full max-w-md px-6 h-6 relative flex justify-center items-center">
+                            <div className="w-full h-px bg-slate-200 absolute"></div>
+                            <div className="bg-white px-3.5 py-1 rounded-3xl relative z-10">
+                                <span className="text-slate-500 text-[10px] font-semibold uppercase leading-4 tracking-wider">
+                                    or
+                                </span>
+                            </div>
+                        </div>
+                    </>
+                )}
 
                 <Link
                     href={"/signup"}

@@ -41,9 +41,10 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
                 return setApiError(data.message)
             }
 
-            //go to app
+            router.push("https://app.noteroom.co")
         } catch (error) {
             setLoadingSubmit(false)
+            return setApiError("Unexpected error occurded. Please try again a bit later");
         }
     }
 
