@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import connectToDatabase from "@/lib/mongodb";
 import { authTokenModel } from "@/models/auth_token";
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid Data" })
         }
 
-        const passwordResetCookie = request.cookies.get("password-reset")
+        const passwordResetCookie = request.cookies.get(cookies.PASSWORD_RESET)
         if(!passwordResetCookie) {
             return NextResponse.json({ ok: false, message: "Invalid reset token" })
         }
@@ -36,8 +37,8 @@ export async function POST(request: NextRequest) {
 
 
         const res = NextResponse.json({ ok: true })
-        res.cookies.delete("password-reset")
-        res.cookies.delete("auth_token")
+        res.cookies.delete(cookies.PASSWORD_RESET)
+        res.cookies.delete(cookies.AUTH_TOKEN)
         return res
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })

@@ -1,8 +1,8 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
-import { authTokenModel } from "@/models/auth_token";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -15,26 +15,41 @@ export async function POST(request: NextRequest) {
         const response = await UserService.getAuthenticatedUser(body.email, body.password)
         if (response.ok) {
             const user = response.user!
-            const jwtUser = {
-                email: user.email,
-                name: user.name,
-                username: user.username,
-                _id: user._id
+
+            if (user.onboarded) {
+                const jwtUser = {
+                    email: user.email,
+                    name: user.name,
+                    username: user.username,
+                    _id: user._id
+                }
+                const jwtToken = JWT.createToken(jwtUser)
+    
+                const res = NextResponse.json({ ok: true })
+                res.cookies.set({
+                    name: cookies.AUTH_TOKEN,
+                    value: jwtToken,
+                    domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
+                    path: "/",
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "none",
+                })
+    
+                return res
+            } else {
+                const jwtOnboardingUser = {
+                    email: user.email,
+                    name: user.name,
+                    _id: user._id
+                }
+                const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser)
+
+                const res = NextResponse.json({ ok: false, needOnboarding: true })
+                res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken)
+
+                return res
             }
-            const jwtToken = JWT.createToken(jwtUser)
-
-            const res = NextResponse.json({ ok: true, token: jwtToken })
-            res.cookies.set({
-                name: "auth_token",
-                value: jwtToken,
-                domain: ".noteroom.co",
-                path: "/",
-                httpOnly: true,
-                secure: true,
-                sameSite: "none",
-            })
-
-            return res
         }
 
         const code = response.code!
@@ -46,7 +61,7 @@ export async function POST(request: NextRequest) {
             const response = await AuthTokenService.createToken("email", body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
-            } 
+            }
 
             const token = response.token!
             await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
@@ -55,7 +70,7 @@ export async function POST(request: NextRequest) {
             })
 
             const res = NextResponse.json({ ok: false, needVerification: true })
-            res.cookies.set("email-verification", token!.tokenID)
+            res.cookies.set(cookies.EMAIL_VERIFICATION, token!.tokenID)
             return res
         }
     } catch (error) {

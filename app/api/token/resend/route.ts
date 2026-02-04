@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import connectToDatabase from "@/lib/mongodb";
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
 
         let verificationCookie = null
 
-        const verificationCookieKey = pathname === "/verify/email" ? "email-verification" : "password-reset"
+        const verificationCookieKey = pathname === "/verify/email" ? cookies.EMAIL_VERIFICATION : cookies.PASSWORD_RESET
         verificationCookie = request.cookies.get(verificationCookieKey)
 
         if (!verificationCookie) {

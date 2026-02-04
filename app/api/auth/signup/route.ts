@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import connectToDatabase from "@/lib/mongodb";
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })
-        res.cookies.set("email-verification", token.tokenID)
+        res.cookies.set(cookies.EMAIL_VERIFICATION, token.tokenID)
         return res
     } catch (error) {
         // @ts-ignore

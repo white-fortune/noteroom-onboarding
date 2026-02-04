@@ -53,12 +53,14 @@ export default function useSignin(): {
             if (!data.ok) {
                 if (data.needVerification) {
                     return router.push("/verify/email")
+                } else if (data.needOnboarding) {
+                    return router.push("/onboard")
                 }
 
                 return setApiError(data.message)
             }
 
-            router.replace("https://app.noteroom.co")
+            //go to app
         } catch (error) {
             setLoadingSubmit(false)
             return setApiError("Unexpected error occurded. Please try again a bit later");

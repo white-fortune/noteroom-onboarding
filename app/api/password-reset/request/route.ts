@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import connectToDatabase from "@/lib/mongodb";
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
 
         await connectToDatabase()
 
-        const passwordResetCookie = request.cookies.get("password-reset")
+        const passwordResetCookie = request.cookies.get(cookies.PASSWORD_RESET)
         if (passwordResetCookie) {
             const tokenID = passwordResetCookie.value
             const response = await AuthTokenService.getTokenByTokenID(tokenID)
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/password-reset/otp" })
-        res.cookies.set("password-reset", token.tokenID)
+        res.cookies.set(cookies.PASSWORD_RESET, token.tokenID)
         return res
     } catch (error) {
         console.error(error)
