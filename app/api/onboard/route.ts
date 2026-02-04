@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authUserModel, TUserIdentity } from "@/models/user";
@@ -22,7 +23,7 @@ function __parseDate(dateStr: string | null) {
 
 export async function POST(request: NextRequest) {
     try {
-        const onboardingUserCookie = request.cookies.get("onboarding-user")
+        const onboardingUserCookie = request.cookies.get(cookies.ONBOARDING_USER)
         if (!onboardingUserCookie) {
             return NextResponse.json({ ok: false, message: "Invalid user" })
         }
@@ -59,9 +60,9 @@ export async function POST(request: NextRequest) {
                 _id: updatedUser._id
             }
             const jwtToken = JWT.createToken(jwtUser)
-            res.cookies.delete("onboarding-user")
+            res.cookies.delete(cookies.ONBOARDING_USER)
             res.cookies.set({
-                name: "auth_token",
+                name: cookies.AUTH_TOKEN,
                 value: jwtToken,
                 domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
                 path: "/",

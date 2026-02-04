@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import UserService from "@/lib/user";
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     
             const res = NextResponse.json({ ok: true })
             res.cookies.set({
-                name: "auth_token",
+                name: cookies.AUTH_TOKEN,
                 value: jwtToken,
                 domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
                 path: "/",
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
             const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser)
 
             const res = NextResponse.json({ ok: false, needOnboarding: true })
-            res.cookies.set("onboarding-user", jwtOnboardingUserToken)
+            res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken)
             
             return res
         }

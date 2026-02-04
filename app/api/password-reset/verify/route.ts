@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +10,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid Data" })
         }
 
-        const passwordResetCookie = request.cookies.get("password-reset")
+        const passwordResetCookie = request.cookies.get(cookies.PASSWORD_RESET)
         if(!passwordResetCookie) {
             return NextResponse.json({ ok: false, message: "Invalid reset token" })
         }

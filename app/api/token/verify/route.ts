@@ -1,3 +1,4 @@
+import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
@@ -8,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const emailVerificationCookie = request.cookies.get("email-verification")!
+        const emailVerificationCookie = request.cookies.get(cookies.EMAIL_VERIFICATION)!
 
         const tokenID = emailVerificationCookie.value
         const otp = body.otp
@@ -34,8 +35,8 @@ export async function POST(request: NextRequest) {
             const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser)
 
             const res = NextResponse.json({ ok: true })
-            res.cookies.delete("email-verification")
-            res.cookies.set("onboarding-user", jwtOnboardingUserToken)
+            res.cookies.delete(cookies.EMAIL_VERIFICATION)
+            res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken)
             return res
         }
 
