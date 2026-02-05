@@ -1,9 +1,10 @@
-import MobileWelcome from "@/components/auth/MobileWelcome";
+import MobileWelcome from "@/app/welcome/components/MobileWelcome";
 import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import { JwtPayload } from "jsonwebtoken";
 import { Metadata } from "next";
 import { cookies as getCookies } from "next/headers";
+import DesktopWelcome from "./components/DesktopWelcome";
 
 export const metadata: Metadata = {
     title: "Welcome"
@@ -19,10 +20,16 @@ export default async function WelcomePage() {
     }
 
     return (
-        <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
-            <div className="lg:hidden w-full min-h-screen bg-white flex flex-col">
-                <MobileWelcome user={user} />
+        <section>
+            <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
+                <div className="lg:hidden w-full min-h-screen bg-white flex flex-col">
+                    <MobileWelcome user={user} />
+                </div>
+
+                <div className="max-lg:hidden w-full min-h-screen bg-white flex flex-col">
+                    <DesktopWelcome user={user} />
+                </div>
             </div>
-        </div>
+        </section>
     )
 }

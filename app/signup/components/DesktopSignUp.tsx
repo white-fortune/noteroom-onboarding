@@ -92,8 +92,6 @@ export default function DesktopSignUpForm() {
                     Sign In
                 </Link>
             </div>
-
-            <DesktopFooterContent />
         </form>
     )
 }

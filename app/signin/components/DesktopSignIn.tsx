@@ -2,7 +2,6 @@
 
 import AuthButton from "@/components/AuthButton"
 import AuthInput from "@/components/AuthInput"
-import { DesktopFooterContent } from "@/components/auth/FooterContent"
 import ThirdPartyAuthProviderSection from "@/components/auth/ThirdPartyAuthProvider"
 import useSignin from "@/hooks/useSignin"
 import Link from "next/link"
@@ -57,19 +56,6 @@ export default function DesktopSigninForm() {
                 >
                     Forgot password?
                 </Link>
-                <div className="flex items-center gap-1.5">
-                    <input
-                        type="checkbox"
-                        id="rememberMe"
-                        className="w-4 h-4 text-sky-400 rounded focus:ring-sky-500 cursor-pointer"
-                    />
-                    <label
-                        htmlFor="rememberMe"
-                        className="text-gray-800 text-sm cursor-pointer select-none"
-                    >
-                        Remember me
-                    </label>
-                </div>
             </div>
 
             {apiError && (
@@ -101,8 +87,6 @@ export default function DesktopSigninForm() {
                     Sign Up
                 </Link>
             </div>
-
-            <DesktopFooterContent />
         </form>
     )
 }
