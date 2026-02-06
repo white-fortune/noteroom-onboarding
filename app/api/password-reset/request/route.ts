@@ -1,6 +1,7 @@
 import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
+import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,19 +13,15 @@ export async function POST(request: NextRequest) {
         }
 
         const email = body.email
-        let token = null
 
         await connectToDatabase()
 
-        const passwordResetCookie = request.cookies.get(cookies.PASSWORD_RESET)
-        if (passwordResetCookie) {
-            const tokenID = passwordResetCookie.value
-            const response = await AuthTokenService.getTokenByTokenID(tokenID)
-            token = response.token!
-        } else {
-            const response = await AuthTokenService.createToken("reset", email)
-            token = response.token!
+        const response = await AuthTokenService.createToken("reset", email)
+        if (!response.ok) {
+            return NextResponse.json({ ok: false, message: "Couldn't create password reset token" })
         }
+
+        const token = response.token!
 
         await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
             EMAIL: body.email,
@@ -32,7 +29,13 @@ export async function POST(request: NextRequest) {
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/password-reset/otp" })
-        res.cookies.set(cookies.PASSWORD_RESET, token.tokenID)
+
+        const passwordResetJwtToken = JWT.createToken({
+            email,
+            tokenID: token.tokenID
+        }, process.env.JWT_VERIFICATION_SECRET!)
+
+        res.cookies.set(cookies.PASSWORD_RESET, passwordResetJwtToken)
         return res
     } catch (error) {
         console.error(error)

@@ -1,8 +1,10 @@
 import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
+import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authTokenModel } from "@/models/auth_token";
 import { authUserModel } from "@/models/user";
+import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -17,7 +19,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid reset token" })
         }
 
-        const tokenID = passwordResetCookie.value
+        const passwordResetJwtToken = passwordResetCookie.value
+        const jwtResponse = JWT.verifyToken(passwordResetJwtToken, process.env.JWT_VERIFICATION_SECRET)
+        if (!jwtResponse) {
+            return NextResponse.json({ ok: false, message: "Invalid Token" })
+        }
+
+        const tokenID = (jwtResponse as JwtPayload).tokenID
         const password = body.password
 
         await connectToDatabase()
