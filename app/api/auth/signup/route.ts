@@ -1,6 +1,7 @@
 import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
+import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import UserService from "@/lib/user";
 import { authUserModel } from "@/models/user";
@@ -36,7 +37,13 @@ export async function POST(request: NextRequest) {
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })
-        res.cookies.set(cookies.EMAIL_VERIFICATION, token.tokenID)
+
+        const emailVerificationJwtToken = JWT.createToken({
+            email: body.email,
+            tokenID: token.tokenID
+        }, process.env.JWT_VERIFICATION_SECRET!)
+
+        res.cookies.set(cookies.EMAIL_VERIFICATION, emailVerificationJwtToken)
         return res
     } catch (error) {
         // @ts-ignore

@@ -4,6 +4,7 @@ import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authTokenModel } from "@/models/auth_token";
 import { authUserModel } from "@/models/user";
+import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -11,7 +12,13 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const emailVerificationCookie = request.cookies.get(cookies.EMAIL_VERIFICATION)!
 
-        const tokenID = emailVerificationCookie.value
+        const emailVerificationJwtToken = emailVerificationCookie.value
+        const jwtResponse = JWT.verifyToken(emailVerificationJwtToken, process.env.JWT_VERIFICATION_SECRET!)
+        if (!jwtResponse) {
+            return NextResponse.json({ ok: false, message: "Invalid Token" })
+        }
+
+        const tokenID = (jwtResponse as JwtPayload).tokenID
         const otp = body.otp
 
         const response = await AuthTokenService.getTokenByTokenID(tokenID)

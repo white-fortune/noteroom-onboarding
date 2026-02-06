@@ -70,7 +70,13 @@ export async function POST(request: NextRequest) {
             })
 
             const res = NextResponse.json({ ok: false, needVerification: true })
-            res.cookies.set(cookies.EMAIL_VERIFICATION, token!.tokenID)
+
+            const emailVerificationJwtToken = JWT.createToken({
+                email: body.email,
+                tokenID: token.tokenID
+            }, process.env.JWT_VERIFICATION_SECRET!)
+
+            res.cookies.set(cookies.EMAIL_VERIFICATION, emailVerificationJwtToken)
             return res
         }
     } catch (error) {
