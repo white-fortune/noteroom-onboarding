@@ -9,46 +9,46 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json()
-        const emailVerificationCookie = request.cookies.get(cookies.EMAIL_VERIFICATION)!
+        const body = await request.json();
+        const emailVerificationCookie = request.cookies.get(cookies.EMAIL_VERIFICATION)!;
 
-        const emailVerificationJwtToken = emailVerificationCookie.value
-        const jwtResponse = JWT.verifyToken(emailVerificationJwtToken, process.env.JWT_VERIFICATION_SECRET!)
+        const emailVerificationJwtToken = emailVerificationCookie.value;
+        const jwtResponse = JWT.verifyToken(emailVerificationJwtToken, process.env.JWT_VERIFICATION_SECRET!);
         if (!jwtResponse) {
-            return NextResponse.json({ ok: false, message: "Invalid Token" })
+            return NextResponse.json({ ok: false, message: "Invalid Token" });
         }
 
-        const tokenID = (jwtResponse as JwtPayload).tokenID
-        const otp = body.otp
+        const email = (jwtResponse as JwtPayload).email
+        const otp = body.otp;
 
-        const response = await AuthTokenService.getTokenByTokenID(tokenID)
+        const response = await AuthTokenService.getTokenByEmailAndType("email", email);
         if (!response.ok) {
-            return NextResponse.json({ ok: false, message: "Invalid Token" })
+            return NextResponse.json({ ok: false, message: "Invalid Token" });
         }
 
-        const token = response.token!
+        const token = response.token!;
         if (token.otp === otp) {
-            await connectToDatabase()
-            
-            const email = token.email
-            await authTokenModel.deleteOne({ tokenID })
+            await connectToDatabase();
 
-            const user = await authUserModel.findOneAndUpdate({ email }, { $set: { isVerified: true } }, { new: true })
+            const email = token.email;
+            await AuthTokenService.deleteTokenByEmailAndType("email", email)
+
+            const user = await authUserModel.findOneAndUpdate({ email }, { $set: { isVerified: true } }, { new: true });
             const jwtOnboardingUser = {
                 email: user.email,
                 name: user.name,
                 _id: user._id
-            }
-            const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser)
+            };
+            const jwtOnboardingUserToken = JWT.createToken(jwtOnboardingUser);
 
-            const res = NextResponse.json({ ok: true })
-            res.cookies.delete(cookies.EMAIL_VERIFICATION)
-            res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken)
-            return res
+            const res = NextResponse.json({ ok: true });
+            res.cookies.delete(cookies.EMAIL_VERIFICATION);
+            res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken);
+            return res;
         }
 
-        return NextResponse.json({ ok: false, message: "Invalid OTP" })
+        return NextResponse.json({ ok: false, message: "Invalid OTP" });
     } catch (error) {
-        return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
+        return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });
     }
 }
