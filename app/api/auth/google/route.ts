@@ -22,16 +22,17 @@ export async function POST(request: NextRequest) {
         }
 
         const payload = response.payload!;
-        const email = payload.email
+        const { name, email, picture } = payload
         let user = await authUserModel.findOne({ email })
 
         if (!user) {
             user = await authUserModel.create({
                 username: UserService.generateUsernameFromEmail(payload.email),
-                email: payload.email,
-                name: payload.name,
+                email,
+                name,
                 authProvider: "google",
-                password: null
+                password: null,
+                profileImageUrl: picture
             });
         } else {
             const authProvider = user.authProvider

@@ -14,6 +14,8 @@ export type TAuthUser = {
     onboarded: boolean,
     identity: TUserIdentity | null,
     birthDate: Date | null,
+    profileImageUrl: string,
+    coverImageUrl: string
 }
 
 const authUserSchema = new mongoose.Schema<TAuthUser>({
@@ -53,11 +55,27 @@ const authUserSchema = new mongoose.Schema<TAuthUser>({
     birthDate: {
         type: Date,
         default: null
+    },
+    profileImageUrl: {
+    	type: String,
+     	required: false,
+        default: () => {
+            const randomAvatar = Math.floor(Math.random() * 4) + 1
+            return `/avatars/avatar-${randomAvatar}.png`
+        }
+    },
+    coverImageUrl: {
+    	type: String,
+     	required: false,
+        default: () => {
+            return `https://placehold.co/400x600?text=Cover Image`
+        }
     }
 })
 authUserSchema.pre("save", function () {
     if (!this.isNew) return
 
+    //NOTE: if a user signs up with a third-party auth provider, the email will be considered verified
     if (this.authProvider) {
         this.isVerified = true
     }
