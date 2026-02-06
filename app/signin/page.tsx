@@ -31,7 +31,7 @@ export default async function SigninPage() {
         <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
             {/* Desktop Design */}
             <div className="hidden lg:grid w-full max-w-300 grid-cols-2 gap-20 items-center p-4">
-                <div className="flex flex-col h-full justify-start items-start gap-5">
+                <div className={`flex flex-col h-full ${user ? 'justify-start' : 'justify-center'} items-start gap-5`}>
                     
                     { user && (
                         <SessionUserProfile user={user} />
@@ -56,7 +56,6 @@ export default async function SigninPage() {
                     </div>
                 </div>
 
-                {/* Login Card */}
                 <div className="w-full max-w-121.75 bg-white rounded-[20px] shadow-sm p-10 mx-auto">
                     <DesktopSigninForm />
                 </div>
