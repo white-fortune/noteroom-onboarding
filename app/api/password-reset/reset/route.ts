@@ -1,10 +1,7 @@
 import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
-import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
-import { authTokenModel } from "@/models/auth_token";
 import { authUserModel } from "@/models/user";
-import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -14,34 +11,28 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid Data" });
         }
 
-        const passwordResetCookie = request.cookies.get(cookies.PASSWORD_RESET);
-        if (!passwordResetCookie) {
-            return NextResponse.json({ ok: false, message: "Invalid reset token" });
+        const searchParams = request.nextUrl.searchParams;
+        const tokenID = searchParams.get("tokenID");
+        if (!tokenID) {
+            return NextResponse.json({ ok: false, message: "Invalid Data" });
         }
 
-        const passwordResetJwtToken = passwordResetCookie.value;
-        const jwtResponse = JWT.verifyToken(passwordResetJwtToken, process.env.JWT_VERIFICATION_SECRET);
-        if (!jwtResponse) {
-            return NextResponse.json({ ok: false, message: "Invalid Token" });
+        const tokenResponse = await AuthTokenService.getEmailByResetTokenID(tokenID);
+        if (!tokenResponse.ok || !tokenResponse.email) {
+            return NextResponse.json({ ok: false, message: "Invalid token" });
         }
 
-        const email = (jwtResponse as JwtPayload).email
         const password = body.password;
+        const email = tokenResponse.email;
 
         await connectToDatabase();
 
-        const response = await AuthTokenService.getTokenByEmailAndType("reset", email);
-        if (!response.ok) {
-            return NextResponse.json({ ok: false, message: "Invalid Token" });
-        }
-
-        const token = response.token!;
-        const updatedResult = await authUserModel.findOneAndUpdate({ email: token.email }, { password });
+        const updatedResult = await authUserModel.findOneAndUpdate({ email: email }, { password });
         if (!updatedResult) {
             return NextResponse.json({ ok: false, message: "Couldn't reset your password" });
         }
-
-        await AuthTokenService.deleteTokenByEmailAndType("reset", email)
+        
+        await AuthTokenService.deleteTokenByTokenID(tokenID);
 
         const res = NextResponse.json({ ok: true });
         res.cookies.delete(cookies.PASSWORD_RESET);

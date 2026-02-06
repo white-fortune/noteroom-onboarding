@@ -1,7 +1,5 @@
-import cookies from "@/config/cookies";
 import AuthTokenService from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
-import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,20 +21,12 @@ export async function POST(request: NextRequest) {
 
         const token = response.token!
 
-        await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
-            EMAIL: body.email,
-            OTP: token.otp
+        await EmailService.sendEmail(process.env.BREVO_PASSWORD_RESET_TEMPLATE_ID!, email, {
+            EMAIL: email,
+            LINK: `https://onboarding.noteroom.co/password-reset/reset?tokenID=${token.tokenID}`
         })
 
-        const res = NextResponse.json({ ok: true, redirect: "/password-reset/otp" })
-
-        const passwordResetJwtToken = JWT.createToken({
-            email,
-            tokenID: token.tokenID
-        }, process.env.JWT_VERIFICATION_SECRET!)
-
-        res.cookies.set(cookies.PASSWORD_RESET, passwordResetJwtToken)
-        return res
+        return NextResponse.json({ ok: true })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
