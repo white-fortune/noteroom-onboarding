@@ -3,10 +3,13 @@
 import { JwtPayload } from "jsonwebtoken"
 import AuthButton from "../AuthButton"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function MobileSessionUserProfile({ user, setShowSessionUser }: { user: JwtPayload, setShowSessionUser: React.Dispatch<React.SetStateAction<boolean>> }) {
+    const router = useRouter()
+
     return (
-        <div className="w-full flex flex-col items-center px-6 gap-4 mt-auto">
+        <div className="w-full flex flex-col items-center px-6 gap-4 mt-10">
             <div className="session-user w-fill flex flex-col items-center gap-3">
                 <div className="profile-image overflow-hidden rounded-full w-40 h-40">
                     <img
@@ -21,7 +24,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser }: {
                 </div>
             </div>
 
-            <AuthButton label={`Continue as ${user.name}`} />
+            <AuthButton label={`Continue as ${user.name}`} onClick={() => router.push("https://app.noteroom.co")} />
 
             <div className="w-full flex items-center justify-center my-5 gap-2">
                 <div className="flex-1 h-px bg-slate-200"></div>
@@ -38,7 +41,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser }: {
                 Continue to Sign In
             </button>
 
-            <div className="w-full flex flex-col items-center mt-10">
+            <div className="w-full flex flex-col items-center mt-20">
                 <div className="flex flex-col items-center gap-1 mb-4">
                     <img
                         src="https://app.noteroom.co/noteroom.png"

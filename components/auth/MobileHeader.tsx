@@ -1,15 +1,17 @@
 "use client"
 
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 interface IMobileHeaderProps {
     title: string 
 }
 export default function MobileHeader({ title }: IMobileHeaderProps) {
+    const router = useRouter()
+
     return (
         <div className="w-full h-14 bg-white shadow-[inset_0px_-0.5px_0px_0px_rgba(226,232,240,1)] flex items-center relative z-40">
-            <Link
-                href={"/welcome"}
+            <button
+                onClick={() => router.push("/welcome")}
                 className="w-16 h-full flex items-center justify-center -ml-2 hover:bg-slate-50 rounded-full transition-colors active:scale-90"
             >
                 <svg
@@ -27,7 +29,7 @@ export default function MobileHeader({ title }: IMobileHeaderProps) {
                         strokeLinejoin="round"
                     />
                 </svg>
-            </Link>
+            </button>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-slate-900 text-base font-medium font-space leading-6">
                     {title}

@@ -2,16 +2,29 @@ import MobileSignIn from "./components/MobileSignIn";
 import DesktopSigninForm from "./components/DesktopSignIn";
 import { Metadata } from "next";
 import SessionUserProfile from "@/components/signin/SessionUserProfile";
+import { cookies as getCookies } from "next/headers";
+import cookies from "@/config/cookies";
+import { JwtPayload } from "jsonwebtoken";
+import JWT from "@/lib/jwt";
+import UserService from "@/lib/user";
 
 export const metadata: Metadata = {
     title: "Sign In"
 }
 
-export default function SigninPage() {
-    //TODO: fetch the actual user details based on AUTH_TOKEN
-    const user = {
-        name: "Test User",
-        profileImageUrl: "https://api.dicebear.com/9.x/pixel-art/svg"
+export default async function SigninPage() {
+    let user = null
+
+    const authTokenCookie = (await getCookies()).get(cookies.AUTH_TOKEN)
+    if (authTokenCookie) {
+        const authToken = authTokenCookie.value
+        const jwtResponse = JWT.verifyToken(authToken) as JwtPayload
+        if (jwtResponse) {
+            const userResponse = await UserService.getSessionUserByID(jwtResponse._id)
+            if (userResponse) {
+                user = userResponse.user!
+            }
+        }
     }
 
     return (

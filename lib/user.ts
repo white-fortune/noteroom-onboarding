@@ -30,6 +30,26 @@ export default class UserService {
         }
     }
 
+    static async getSessionUserByID(id: string): Promise<{
+        ok: boolean;
+        user?: any;
+        error?: any;
+    }> {
+        try {
+            const user = await authUserModel.findById(id)
+            if (!user) {
+                return { ok: true, user: null }
+            }
+
+            return { ok: true, user: {
+                name: user.name,
+                profileImageUrl: user.profileImageUrl
+            } }
+        } catch (error) {
+            return { ok: false, error }
+        }
+    }
+
     static async verifyGoogleCredential(credential: string): Promise<{
         ok: boolean;
         code?: "NOT_VALID_AUTH" | "SERVER_ERROR";
