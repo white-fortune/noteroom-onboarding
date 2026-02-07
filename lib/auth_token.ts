@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import redisClient from "./redis";
 
 export default class AuthTokenService {
-    //CRITICAL: create password reset record with the key `password_reset:tokenID`
     //CRITICAL: separate and clean implementation of email-verification and password-reset token CRUD
     
     static async createToken(type: "email" | "reset", email: string) {
@@ -18,7 +17,7 @@ export default class AuthTokenService {
                 return { ok: true, token: { tokenID, email, otp } };
             }
 
-            await redisClient.setex(tokenID, 3600, email);
+            await redisClient.setex(`pr:${tokenID}`, 3600, email);
             return { ok: true, token: { tokenID, email } };
         } catch (error) {
             return { ok: false, error };
@@ -27,7 +26,7 @@ export default class AuthTokenService {
 
     static async verifyTokenByTokenID(tokenID: string) {
         try {
-            const response = await redisClient.exists(tokenID);
+            const response = await redisClient.exists(`pr:${tokenID}`);
             return { ok: response === 1 };
         } catch (error) {
             return { ok: false, error };
@@ -36,7 +35,7 @@ export default class AuthTokenService {
 
     static async getEmailByResetTokenID(tokenID: string) {
         try {
-            const email = await redisClient.get(tokenID);
+            const email = await redisClient.get(`pr:${tokenID}`);
             return { ok: true, email };
         } catch (error) {
             return { ok: false, error };
@@ -70,7 +69,7 @@ export default class AuthTokenService {
 
     static async deleteTokenByTokenID(tokenID: string) {
         try {
-            const response = await redisClient.del(tokenID)
+            const response = await redisClient.del(`pr:${tokenID}`)
             return { ok: response === 1 }
         } catch (error) {
             return { ok: false, error }
