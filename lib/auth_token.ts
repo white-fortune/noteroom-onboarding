@@ -9,7 +9,10 @@ export class EmailVerificationTokenService {
             const tokenID = nanoid(20);
             const otp = EmailVerificationTokenService.createOTP();
 
-            await redisClient.hset(`ev:${email}`, "token", tokenID, "otp", otp);
+            await redisClient.multi()
+                .hset(`ev:${email}`, "tokenID", tokenID, "otp", otp)
+                .expire(`ev:${email}`, 3600)
+                .exec()
 
             return { ok: true, token: { tokenID, email, otp } }
         } catch (error) {
@@ -19,7 +22,7 @@ export class EmailVerificationTokenService {
 
     static async deleteTokenByEmail(email: string) {
         try {
-            await redisClient.hdel(`ev:${email}`, "token", "otp");
+            await redisClient.hdel(`ev:${email}`, "tokenID", "otp");
             return { ok: true }
         } catch (error) {
             return { ok: false, error }
@@ -30,7 +33,7 @@ export class EmailVerificationTokenService {
         try {
             const token = (await redisClient.hgetall(`ev:${email}`)) as { tokenID: string, otp: string };
 
-            if (!token) {
+            if (!token.tokenID) {
                 return { ok: true, token: null };
             }
             return { ok: true, token: { ...token, email } };

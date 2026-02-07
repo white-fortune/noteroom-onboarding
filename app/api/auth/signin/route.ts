@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
+            //NOTE: as creating a token means, if it already exists, it will be overwritten
             const response = await EmailVerificationTokenService.createToken(body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })

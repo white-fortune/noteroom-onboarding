@@ -2,7 +2,6 @@ import cookies from "@/config/cookies";
 import { EmailVerificationTokenService } from "@/lib/auth_token";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
-import { authTokenModel } from "@/models/auth_token";
 import { authUserModel } from "@/models/user";
 import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
@@ -23,10 +22,14 @@ export async function POST(request: NextRequest) {
 
         const response = await EmailVerificationTokenService.getTokenByEmail(email);
         if (!response.ok) {
+            return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });
+        }
+        
+        const token = response.token;
+        if (!token) {
             return NextResponse.json({ ok: false, message: "Invalid Token" });
         }
 
-        const token = response.token!;
         if (token.otp === otp) {
             await connectToDatabase();
 
@@ -49,6 +52,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ ok: false, message: "Invalid OTP" });
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });
     }
 }
