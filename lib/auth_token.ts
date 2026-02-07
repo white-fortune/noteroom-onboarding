@@ -9,7 +9,7 @@ export default class AuthTokenService {
             const tokenID = nanoid(20);
 
             if (type === "email") {
-                const hashKey = `email_verification:${email}`;
+                const hashKey = `ev:${email}`;
                 const otp = AuthTokenService.createOTP();
 
                 await redisClient.hset(hashKey, "token", tokenID, "otp", otp);
@@ -44,7 +44,7 @@ export default class AuthTokenService {
 
     static async getTokenByEmailAndType(type: "email" | "reset", email: string) {
         try {
-            const hashKey = `${type === "email" ? "email_verification" : "password_reset"}:${email}`;
+            const hashKey = `${type === "email" ? "ev" : "password_reset"}:${email}`;
             const token = (await redisClient.hgetall(hashKey)) as { tokenID: string; otp: string };
 
             if (!token) {
@@ -58,7 +58,7 @@ export default class AuthTokenService {
 
     static async deleteTokenByEmailAndType(type: "email" | "reset", email: string) {
         try {
-            const hashKey = `${type === "email" ? "email_verification" : "password_reset"}:${email}`;
+            const hashKey = `${type === "email" ? "ev" : "password_reset"}:${email}`;
             await redisClient.hdel(hashKey, "token", "otp");
 
             return { ok: true };
