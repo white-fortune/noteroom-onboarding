@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
         await AuthTokenService.deleteTokenByTokenID(tokenID);
 
         const res = NextResponse.json({ ok: true });
-        res.cookies.delete(cookies.PASSWORD_RESET);
         res.cookies.delete(cookies.AUTH_TOKEN);
         return res;
     } catch (error) {

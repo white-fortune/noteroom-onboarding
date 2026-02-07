@@ -13,8 +13,7 @@ export async function POST(request: NextRequest) {
 
         let verificationCookie = null;
 
-        const verificationCookieKey =
-            pathname === "/verify/email" ? cookies.EMAIL_VERIFICATION : cookies.PASSWORD_RESET;
+        const verificationCookieKey = cookies.EMAIL_VERIFICATION
         verificationCookie = request.cookies.get(verificationCookieKey);
 
         if (!verificationCookie) {

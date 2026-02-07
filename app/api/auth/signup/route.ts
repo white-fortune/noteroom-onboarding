@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
         await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
             EMAIL: body.email,
-            OTP: token.otp
+            OTP: token.otp!
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })
