@@ -8,19 +8,16 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Step, useOnboardingContext } from "./OnboardingClient"
 
-const INTERESTS = [
-    "Travelling", "Music", "Science", "Technology", "Art", "Sports",
-    "Cooking", "Photography", "Business", "Fashion", "Gaming",
-    "History", "Movies", "Reading", "Health", "Nature", "Finance",
-    "Design", "Marketing", "Psychology", "Politics", "Writing",
-    "Productivity", "Journaling"
-]
-
+type TInterest = {
+    id: string,
+    label: string
+}
 
 export default function UserInterestsStep() {
     const { onboardingData: [onboardingData, setOnboardingData], step: [, setStep] } = useOnboardingContext()!
     const [apiError, setApiError] = useState<string>("")
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
+    const [interests, setInterests] = useState<TInterest[]>([])
     const router = useRouter()
 
     async function handleSubmit(clearInterests: boolean = false) {
@@ -39,7 +36,7 @@ export default function UserInterestsStep() {
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify(onboardingData)
+                body: JSON.stringify(data)
             })
             setLoadingSubmit(false)
 
@@ -63,6 +60,20 @@ export default function UserInterestsStep() {
         setApiError("")
     }, [onboardingData])
 
+    useEffect(() => {
+        async function fetchInterests() {
+            try {
+                const response = await fetch("/interests.json")
+                const data = await response.json()
+                setInterests(data)
+            } catch (error) {
+                setInterests([])
+            }
+        }
+
+        fetchInterests()
+    }, [])
+
     return (
         <motion.div
             key="step3"
@@ -82,12 +93,12 @@ export default function UserInterestsStep() {
 
             <div className="flex flex-col gap-8 md:gap-10">
                 <div className="flex flex-wrap gap-2 md:gap-3 justify-start items-center overflow-x-hidden">
-                    {INTERESTS.map((topic) => (
+                    {interests.map(({id, label}) => (
                         <InterestPill
-                            key={topic}
-                            topic={topic}
-                            selected={onboardingData.interests.includes(topic)}
-                            onClick={() => setOnboardingData(prev => ({ ...prev, interests: [...new Set([...prev.interests, topic])] }))}
+                            key={id}
+                            topic={label}
+                            selected={onboardingData.interests.includes(id)}
+                            onClick={() => setOnboardingData(prev => ({ ...prev, interests: [...new Set([...prev.interests, id])] }))}
                         />
                     ))}
                 </div>
