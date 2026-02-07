@@ -7,6 +7,7 @@ import cookies from "@/config/cookies";
 import { JwtPayload } from "jsonwebtoken";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
+import connectToDatabase from "@/lib/mongodb";
 
 export const metadata: Metadata = {
     title: "Sign In"
@@ -16,22 +17,18 @@ export default async function SigninPage() {
     let user = null
 
     const authTokenCookie = (await getCookies()).get(cookies.AUTH_TOKEN)
-    console.log(authTokenCookie)
     if (authTokenCookie) {
         const authToken = authTokenCookie.value
-        console.log(authToken)
         const jwtResponse = JWT.verifyToken(authToken) as JwtPayload
-        console.log(jwtResponse)
         if (jwtResponse) {
+            await connectToDatabase()
+            
             const userResponse = await UserService.getSessionUserByID(jwtResponse._id)
-            console.log(userResponse)
             if (userResponse.ok) {
                 user = userResponse.user!
             }
         }
     }
-
-    console.log(user)
 
     return (
         <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
