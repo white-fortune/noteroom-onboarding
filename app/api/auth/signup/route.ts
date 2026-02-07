@@ -1,5 +1,5 @@
 import cookies from "@/config/cookies";
-import AuthTokenService from "@/lib/auth_token";
+import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
             password: body.password,
         })
 
-        const response = await AuthTokenService.createToken("email", body.email)
+        const response = await EmailVerificationTokenService.createToken(body.email)
         if (!response.ok) {
             //FIXME: what to do if this fails
             return NextResponse.json({ ok: false, message: "Couldn't create verification token" })
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
         await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
             EMAIL: body.email,
-            OTP: token.otp
+            OTP: token.otp!
         })
 
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })

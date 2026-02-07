@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import AuthButton from "../AuthButton"
 import AuthInput from "../AuthInput"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { EmailSchema } from "@/zschema/partial"
 import emitErrors from "@/zschema/error"
 
@@ -11,10 +11,12 @@ export default function EmailStageForm() {
     const [email, setEmail] = useState<string>("")
     const [disabled, setDisabled] = useState<boolean>(false)
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
-    const [apiError, setApiError] = useState<string>("")
+    const [apiMessage, setApiMessage] = useState<{ type: "error" | "success" | null, message: string }>({ type: null, message: "" })
     const [fieldError, setFieldError] = useState<string>("")
     const [focusedInput, setFocusedInput] = useState<boolean>(false)
+    const searchParams = useSearchParams()
     const router = useRouter()
+    const pathname = usePathname()
 
     async function handleSubmit(e: React.SubmitEvent) {
         try {
@@ -32,19 +34,27 @@ export default function EmailStageForm() {
             setLoadingSubmit(false)
 
             if (!response.ok) {
-                return setApiError("Unexpected error occurded. Please try again a bit later");
+                return setApiMessage({
+                    type: "error",
+                    message: "Unexpected error occurded. Please try again a bit later"
+                });
             }
 
             const data = await response.json()
             if (!data.ok) {
-                return setApiError(data.message)
+                return setApiMessage(data.message)
             }
 
-            const redirect = data.redirect
-            router.push(redirect)
+            setApiMessage({
+                type: "success",
+                message: "An email with reset link has been sent"
+            })
         } catch (error) {
             setLoadingSubmit(false)
-            setApiError("Unexpected error occurded. Please try again a bit later");
+            setApiMessage({
+                type: "error",
+                message: "Unexpected error occurded. Please try again a bit later"
+            });
         }
     }
 
@@ -60,6 +70,18 @@ export default function EmailStageForm() {
             setFieldError("")
         }
     }, [email])
+
+    useEffect(() => {
+        const errorCode = searchParams.get("code")
+        if (errorCode) {
+            if (errorCode === "INVALID_CODE") {
+                setApiMessage({
+                    type: "error",
+                    message: "Invalid reset token. Please request again to get a new one"
+                })
+            }
+        }
+    }, [searchParams])
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col h-full items-center">
@@ -81,14 +103,15 @@ export default function EmailStageForm() {
                     error={focusedInput ? fieldError : ""}
                     onFocus={() => {
                         setFocusedInput(true)
-                        setApiError("")
+                        setApiMessage({ type: null, message: "" })
+                        router.replace(pathname)
                     }}
                     onBlur={() => setFocusedInput(false)}
                 />
             </div>
 
-            {apiError && (
-                <p className="text-red-500 text-sm text-center mb-4">{apiError}</p>
+            {apiMessage.message && (
+                <p className={`${apiMessage.type === "error" ? "text-red-500" : "text-green-500"} text-sm text-center mb-4`}>{apiMessage.message}</p>
             )}
 
             <AuthButton label={loadingSubmit ? "Submiting..." : "Submit"} disabled={loadingSubmit || disabled} />

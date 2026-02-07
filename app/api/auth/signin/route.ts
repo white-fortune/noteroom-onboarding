@@ -1,5 +1,5 @@
 import cookies from "@/config/cookies";
-import AuthTokenService from "@/lib/auth_token";
+import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
@@ -58,7 +58,8 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
-            const response = await AuthTokenService.createToken("email", body.email)
+            //NOTE: as creating a token means, if it already exists, it will be overwritten
+            const response = await EmailVerificationTokenService.createToken(body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
             }
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
             const token = response.token!
             await EmailService.sendEmail(process.env.BREVO_VERIFY_EMAIL_TEMPLATE_ID!, body.email, {
                 EMAIL: body.email,
-                OTP: token.otp
+                OTP: token.otp!
             })
 
             const res = NextResponse.json({ ok: false, needVerification: true })
