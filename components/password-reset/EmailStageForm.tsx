@@ -47,7 +47,7 @@ export default function EmailStageForm() {
 
             setApiMessage({
                 type: "success",
-                message: "An email with reset link has been sent"
+                message: "If an account with this email exists, you will receive a password reset email shortly."
             })
         } catch (error) {
             setLoadingSubmit(false)
