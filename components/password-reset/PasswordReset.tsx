@@ -9,7 +9,7 @@ import emitErrors from "@/zschema/error";
 
 type TFocusedField = { [K in keyof TResetPasswordForm]: boolean }
 
-export default function PasswordReset({ tokenID }: { tokenID: string }) {
+export default function PasswordReset({ token }: { token: string }) {
     const [form, _setForm] = useState<TResetPasswordForm>({ password: "", confirmPassword: "" })
     const [fieldError, setFieldError] = useState<TResetPasswordForm>({ password: "", confirmPassword: "" })
     const [focusedField, _setFocusedField] = useState<TFocusedField>({ password: false, confirmPassword: false })
@@ -32,7 +32,7 @@ export default function PasswordReset({ tokenID }: { tokenID: string }) {
             e.preventDefault()
             setLoadingSubmit(true)
 
-            const response = await fetch(`/api/password-reset/reset?tokenID=${tokenID}`, {
+            const response = await fetch(`/api/password-reset/reset?token=${token}`, {
                 method: "post",
                 headers: {
                     "Content-type": "application/json"

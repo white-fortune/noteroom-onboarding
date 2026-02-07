@@ -4,20 +4,20 @@ import { redirect } from "next/navigation"
 
 type PageProps = {
     searchParams: Promise<{
-        tokenID: string
+        token: string
     }>
 }
 
 export default async function ResetStage({ searchParams }: PageProps) {
     const params = await searchParams
-    const tokenID = params.tokenID
+    const token = params.token
 
-    const response = await PasswordResetTokenService.verifyTokenByTokenID(tokenID)
-    if (!response.ok) {
+    const response = await PasswordResetTokenService.verifyToken(token)
+    if (!response.ok || !response.valid) {
         redirect("/password-reset?code=INVALID_CODE")
     }
 
     return (
-        <PasswordReset tokenID={tokenID} />
+        <PasswordReset token={token} />
     )
 }

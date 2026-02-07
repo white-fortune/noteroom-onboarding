@@ -12,12 +12,13 @@ export async function POST(request: NextRequest) {
         }
 
         const searchParams = request.nextUrl.searchParams;
-        const tokenID = searchParams.get("tokenID");
-        if (!tokenID) {
+        const token = searchParams.get("token");
+        if (!token) {
             return NextResponse.json({ ok: false, message: "Invalid Data" });
         }
 
-        const tokenResponse = await PasswordResetTokenService.getEmailByTokenID(tokenID);
+        //FIXME: enfore token validation as its an api
+        const tokenResponse = await PasswordResetTokenService.getEmailFromToken(token);
         if (!tokenResponse.ok || !tokenResponse.email) {
             return NextResponse.json({ ok: false, message: "Invalid token" });
         }
@@ -31,8 +32,8 @@ export async function POST(request: NextRequest) {
         if (!updatedResult) {
             return NextResponse.json({ ok: false, message: "Couldn't reset your password" });
         }
-        
-        await PasswordResetTokenService.deleteTokenByTokenID(tokenID);
+
+        await PasswordResetTokenService.deleteTokenByEmail(email);
 
         const res = NextResponse.json({ ok: true });
         res.cookies.delete(cookies.AUTH_TOKEN);

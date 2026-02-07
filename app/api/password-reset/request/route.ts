@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
         await EmailService.sendEmail(process.env.BREVO_PASSWORD_RESET_TEMPLATE_ID!, email, {
             EMAIL: email,
-            LINK: `https://onboarding.noteroom.co/password-reset/reset?tokenID=${token.tokenID}`
+            LINK: `https://onboarding.noteroom.co/password-reset/reset?token=${token}`
         })
 
         return NextResponse.json({ ok: true })
