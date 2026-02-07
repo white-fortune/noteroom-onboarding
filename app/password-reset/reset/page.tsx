@@ -1,5 +1,5 @@
 import PasswordReset from "@/components/password-reset/PasswordReset"
-import AuthTokenService from "@/lib/auth_token"
+import { PasswordResetTokenService } from "@/lib/auth_token"
 import { redirect } from "next/navigation"
 
 type PageProps = {
@@ -12,7 +12,7 @@ export default async function ResetStage({ searchParams }: PageProps) {
     const params = await searchParams
     const tokenID = params.tokenID
 
-    const response = await AuthTokenService.verifyTokenByTokenID(tokenID)
+    const response = await PasswordResetTokenService.verifyTokenByTokenID(tokenID)
     if (!response.ok) {
         redirect("/password-reset?code=INVALID_CODE")
     }

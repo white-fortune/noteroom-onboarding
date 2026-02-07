@@ -1,5 +1,5 @@
 import cookies from "@/config/cookies";
-import AuthTokenService from "@/lib/auth_token";
+import { PasswordResetTokenService } from "@/lib/auth_token";
 import connectToDatabase from "@/lib/mongodb";
 import { authUserModel } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid Data" });
         }
 
-        const tokenResponse = await AuthTokenService.getEmailByResetTokenID(tokenID);
+        const tokenResponse = await PasswordResetTokenService.getEmailByTokenID(tokenID);
         if (!tokenResponse.ok || !tokenResponse.email) {
             return NextResponse.json({ ok: false, message: "Invalid token" });
         }
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Couldn't reset your password" });
         }
         
-        await AuthTokenService.deleteTokenByTokenID(tokenID);
+        await PasswordResetTokenService.deleteTokenByTokenID(tokenID);
 
         const res = NextResponse.json({ ok: true });
         res.cookies.delete(cookies.AUTH_TOKEN);

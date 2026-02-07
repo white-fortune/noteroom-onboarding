@@ -1,4 +1,4 @@
-import AuthTokenService from "@/lib/auth_token";
+import { PasswordResetTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
         await connectToDatabase()
 
-        const response = await AuthTokenService.createToken("reset", email)
+        const response = await PasswordResetTokenService.createToken(email)
         if (!response.ok) {
             return NextResponse.json({ ok: false, message: "Couldn't create password reset token" })
         }

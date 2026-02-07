@@ -1,5 +1,5 @@
 import cookies from "@/config/cookies";
-import AuthTokenService from "@/lib/auth_token";
+import { EmailVerificationTokenService } from "@/lib/auth_token";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authTokenModel } from "@/models/auth_token";
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         const email = (jwtResponse as JwtPayload).email
         const otp = body.otp;
 
-        const response = await AuthTokenService.getTokenByEmailAndType("email", email);
+        const response = await EmailVerificationTokenService.getTokenByEmail(email);
         if (!response.ok) {
             return NextResponse.json({ ok: false, message: "Invalid Token" });
         }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
             await connectToDatabase();
 
             const email = token.email;
-            await AuthTokenService.deleteTokenByEmailAndType("email", email)
+            await EmailVerificationTokenService.deleteTokenByEmail(email)
 
             const user = await authUserModel.findOneAndUpdate({ email }, { $set: { isVerified: true } }, { new: true });
             const jwtOnboardingUser = {

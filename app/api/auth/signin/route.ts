@@ -1,5 +1,5 @@
 import cookies from "@/config/cookies";
-import AuthTokenService from "@/lib/auth_token";
+import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
-            const response = await AuthTokenService.createToken("email", body.email)
+            const response = await EmailVerificationTokenService.createToken(body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
             }
