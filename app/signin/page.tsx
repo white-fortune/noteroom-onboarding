@@ -23,7 +23,7 @@ export default async function SigninPage() {
         if (jwtResponse) {
             await connectToDatabase()
             
-            const userResponse = await UserService.getSessionUserByID(jwtResponse._id)
+            const userResponse = await UserService.getSessionUserByID(jwtResponse._id, jwtResponse.authTokenVersion)
             if (userResponse.ok) {
                 user = userResponse.user!
             }

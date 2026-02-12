@@ -31,7 +31,7 @@ export default class UserService {
         }
     }
 
-    static async getSessionUserByID(id: string): Promise<{
+    static async getSessionUserByID(id: string, authTokenVersion: number): Promise<{
         ok: boolean;
         user?: any;
         error?: any;
@@ -39,6 +39,10 @@ export default class UserService {
         try {
             const user = await authUserModel.findById(id)
             if (!user) {
+                return { ok: true, user: null }
+            }
+
+            if (user.authTokenVersion !== authTokenVersion) {
                 return { ok: true, user: null }
             }
 
