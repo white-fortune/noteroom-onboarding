@@ -28,7 +28,13 @@ export async function POST(request: NextRequest) {
 
         await connectToDatabase();
 
-        const updatedResult = await authUserModel.findOneAndUpdate({ email: email }, { password });
+        const updatedResult = await authUserModel.findOneAndUpdate(
+            { email: email }, 
+            { 
+                $set: { password }, 
+                $inc: { authTokenVersion: 1 } 
+            }
+        );
         if (!updatedResult) {
             return NextResponse.json({ ok: false, message: "Couldn't reset your password" });
         }

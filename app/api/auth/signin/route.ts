@@ -17,13 +17,13 @@ export async function POST(request: NextRequest) {
             const user = response.user!
 
             if (user.onboarded) {
-                const jwtUser = {
+                const jwtToken = (await UserService.getJWTTokenFromUser({
                     email: user.email,
                     name: user.name,
                     username: user.username,
-                    _id: user._id
-                }
-                const jwtToken = JWT.createToken(jwtUser)
+                    _id: user._id,
+                    authTokenVersion: user.authTokenVersion
+                })).token!
     
                 const res = NextResponse.json({ ok: true })
                 res.cookies.set({

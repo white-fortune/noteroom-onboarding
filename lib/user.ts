@@ -1,6 +1,7 @@
-import { authUserModel } from "@/models/user";
+import { authUserModel, TJWTUser } from "@/models/user";
 import connectToDatabase from "./mongodb";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
+import JWT from "./jwt";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!
 
@@ -70,6 +71,19 @@ export default class UserService {
             return { ok: true, payload: token.getPayload()! as Required<TokenPayload> };
         } catch (error) {
             return { ok: false, code: "SERVER_ERROR", error };
+        }
+    }
+
+    static async getJWTTokenFromUser(user: TJWTUser): Promise<{
+        ok: boolean;
+        token?: any;
+        error?: any;
+    }> {
+        try {
+            const token =  JWT.createToken(user)
+            return { ok: true, token }
+        } catch (error) {
+            return { ok: false, error }
         }
     }
 

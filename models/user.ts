@@ -15,8 +15,10 @@ export type TAuthUser = {
     identity: TUserIdentity | null,
     birthDate: Date | null,
     profileImageUrl: string,
-    coverImageUrl: string
+    coverImageUrl: string,
+    authTokenVersion: number
 }
+export type TJWTUser = Pick<TAuthUser, "email" | "name" | "username" | "authTokenVersion"> & { _id: string }
 
 const authUserSchema = new mongoose.Schema<TAuthUser>({
     name: {
@@ -55,6 +57,10 @@ const authUserSchema = new mongoose.Schema<TAuthUser>({
     birthDate: {
         type: Date,
         default: null
+    },
+    authTokenVersion: {
+        type: Number, 
+        default: 0
     },
     profileImageUrl: {
     	type: String,

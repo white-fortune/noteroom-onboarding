@@ -1,6 +1,7 @@
 import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
+import UserService from "@/lib/user";
 import { authUserModel, TUserIdentity } from "@/models/user";
 import { userInterestsModel } from "@/models/user_interests";
 import { JwtPayload } from "jsonwebtoken";
@@ -53,13 +54,14 @@ export async function POST(request: NextRequest) {
                 { $set: { birthDate: __parseDate(body.dob), identity: body.identity, onboarded: true } },
                 { new: true }
             )
-            const jwtUser = {
+            const jwtToken = (await UserService.getJWTTokenFromUser({
                 email: updatedUser.email,
                 name: updatedUser.name,
                 username: updatedUser.username,
-                _id: updatedUser._id
-            }
-            const jwtToken = JWT.createToken(jwtUser)
+                _id: updatedUser._id,
+                authTokenVersion: updatedUser.authTokenVersion
+            })).token!
+            
             res.cookies.delete(cookies.ONBOARDING_USER)
             res.cookies.set({
                 name: cookies.AUTH_TOKEN,
