@@ -2,7 +2,7 @@ import cookies from "@/config/cookies";
 import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
-import { JwtPayload } from "jsonwebtoken";
+import { TEmailVerificationCookie } from "@/types/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,14 +13,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid verification token. Try to signin again" });
         }
 
-        const verificationJwtToken = emailVerificationCookie.value;
-        const jwtResponse = JWT.verifyToken(verificationJwtToken, process.env.JWT_VERIFICATION_SECRET!);
+        const emailVerificationJwtToken = emailVerificationCookie.value;
+        const jwtResponse = JWT.verifyToken(emailVerificationJwtToken, process.env.JWT_VERIFICATION_SECRET!);
         if (!jwtResponse) {
             return NextResponse.json({ ok: false, message: "Invalid verification token. Try to signin again" });
         }
 
-        const email = (jwtResponse as JwtPayload).email;
-
+        const email = (jwtResponse as TEmailVerificationCookie).email;
         const response = await EmailVerificationTokenService.createToken(email)
         if (!response.ok) {
             return NextResponse.json({ ok: false, message: "Couldn't create new token. Try again a bit later"})
@@ -35,15 +34,16 @@ export async function POST(request: NextRequest) {
 
         const res = NextResponse.json({ ok: true });
 
-        const verificationJwt = JWT.createToken({
-            email: email,
+        const emailVerificationJwtPayload: TEmailVerificationCookie = {
+            email,
             tokenID: token.tokenID
-        }, process.env.JWT_VERIFICATION_SECRET!);
-
-        res.cookies.set(cookies.EMAIL_VERIFICATION, verificationJwt);
+        }
+        const newEmailVerificationJwtToken = JWT.createToken(emailVerificationJwtPayload, process.env.JWT_VERIFICATION_SECRET!);
+        res.cookies.set(cookies.EMAIL_VERIFICATION, newEmailVerificationJwtToken);
 
         return res;
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });
     }
 }
+

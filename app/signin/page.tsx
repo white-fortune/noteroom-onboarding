@@ -4,10 +4,10 @@ import { Metadata } from "next";
 import SessionUserProfile from "@/components/signin/SessionUserProfile";
 import { cookies as getCookies } from "next/headers";
 import cookies from "@/config/cookies";
-import { JwtPayload } from "jsonwebtoken";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
 import connectToDatabase from "@/lib/mongodb";
+import { TAuthTokenCookie } from "@/types/cookies";
 
 export const metadata: Metadata = {
     title: "Sign In"
@@ -19,7 +19,7 @@ export default async function SigninPage() {
     const authTokenCookie = (await getCookies()).get(cookies.AUTH_TOKEN)
     if (authTokenCookie) {
         const authToken = authTokenCookie.value
-        const jwtResponse = JWT.verifyToken(authToken) as JwtPayload
+        const jwtResponse = JWT.verifyToken(authToken) as TAuthTokenCookie
         if (jwtResponse) {
             await connectToDatabase()
             

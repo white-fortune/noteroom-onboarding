@@ -3,6 +3,7 @@ import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
+import { TOnboardingUserCookie, TAuthTokenCookie, TEmailVerificationCookie } from "@/types/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -17,13 +18,14 @@ export async function POST(request: NextRequest) {
             const user = response.user!
 
             if (user.onboarded) {
-                const jwtToken = (await UserService.getJWTTokenFromUser({
+                const jwtUser: TAuthTokenCookie = {
                     email: user.email,
                     name: user.name,
                     username: user.username,
                     _id: user._id,
                     authTokenVersion: user.authTokenVersion
-                })).token!
+                }
+                const jwtToken = JWT.createToken(jwtUser)
     
                 const res = NextResponse.json({ ok: true })
                 res.cookies.set({
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
     
                 return res
             } else {
-                const jwtOnboardingUser = {
+                const jwtOnboardingUser: TOnboardingUserCookie = {
                     email: user.email,
                     name: user.name,
                     _id: user._id
@@ -58,7 +60,6 @@ export async function POST(request: NextRequest) {
         } else if (code === "SERVER_ERROR") {
             return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
         } else if (code === "NOT_VERIFIED") {
-            //NOTE: as creating a token means, if it already exists, it will be overwritten
             const response = await EmailVerificationTokenService.createToken(body.email)
             if (!response.ok) {
                 return NextResponse.json({ ok: false, message: "Couldn't verify your email" })
@@ -72,12 +73,13 @@ export async function POST(request: NextRequest) {
 
             const res = NextResponse.json({ ok: false, needVerification: true })
 
-            const emailVerificationJwtToken = JWT.createToken({
+            const emailVerificationJwtPayload: TEmailVerificationCookie = {
                 email: body.email,
                 tokenID: token.tokenID
-            }, process.env.JWT_VERIFICATION_SECRET!)
-
+            }
+            const emailVerificationJwtToken = JWT.createToken(emailVerificationJwtPayload, process.env.JWT_VERIFICATION_SECRET!)
             res.cookies.set(cookies.EMAIL_VERIFICATION, emailVerificationJwtToken)
+
             return res
         }
     } catch (error) {
@@ -85,3 +87,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
     }
 }
+

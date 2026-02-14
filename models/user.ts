@@ -1,24 +1,5 @@
 import mongoose, { model, models } from "mongoose"
-
-
-const userIdentities = ["teacher", "student", "researcher", "creator", "other"] as const
-export type TUserIdentity = typeof userIdentities[number]
-
-export type TAuthUser = {
-    name: string,
-    email: string,
-    password: string,
-    username: string,
-    authProvider: string | null,
-    isVerified: boolean,
-    onboarded: boolean,
-    identity: TUserIdentity | null,
-    birthDate: Date | null,
-    profileImageUrl: string,
-    coverImageUrl: string,
-    authTokenVersion: number
-}
-export type TJWTUser = Pick<TAuthUser, "email" | "name" | "username" | "authTokenVersion"> & { _id: string }
+import { userIdentities, TAuthUser } from "@/types/auth_user"
 
 const authUserSchema = new mongoose.Schema<TAuthUser>({
     name: {

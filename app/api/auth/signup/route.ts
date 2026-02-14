@@ -5,6 +5,7 @@ import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import UserService from "@/lib/user";
 import { authUserModel } from "@/models/user";
+import { TEmailVerificationCookie } from "@/types/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -38,12 +39,14 @@ export async function POST(request: NextRequest) {
 
         const res = NextResponse.json({ ok: true, redirect: "/verify/email" })
 
-        const emailVerificationJwtToken = JWT.createToken({
+        const emailVerificationJwtPayload: TEmailVerificationCookie = {
             email: body.email,
             tokenID: token.tokenID
-        }, process.env.JWT_VERIFICATION_SECRET!)
+        }
+        const emailVerificationJwtToken = JWT.createToken(emailVerificationJwtPayload, process.env.JWT_VERIFICATION_SECRET!)
 
         res.cookies.set(cookies.EMAIL_VERIFICATION, emailVerificationJwtToken)
+
         return res
     } catch (error) {
         // @ts-ignore
@@ -59,3 +62,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
     }
 }
+

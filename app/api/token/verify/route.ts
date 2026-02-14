@@ -3,7 +3,7 @@ import { EmailVerificationTokenService } from "@/lib/auth_token";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authUserModel } from "@/models/user";
-import { JwtPayload } from "jsonwebtoken";
+import { TEmailVerificationCookie, TOnboardingUserCookie } from "@/types/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, message: "Invalid Token" });
         }
 
-        const email = (jwtResponse as JwtPayload).email
+        const email = (jwtResponse as TEmailVerificationCookie).email
         const otp = body.otp;
 
         const response = await EmailVerificationTokenService.getTokenByEmail(email);
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
             await EmailVerificationTokenService.deleteTokenByEmail(email)
 
             const user = await authUserModel.findOneAndUpdate({ email }, { $set: { isVerified: true } }, { new: true });
-            const jwtOnboardingUser = {
+            const jwtOnboardingUser: TOnboardingUserCookie = {
                 email: user.email,
                 name: user.name,
                 _id: user._id
@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
             const res = NextResponse.json({ ok: true });
             res.cookies.delete(cookies.EMAIL_VERIFICATION);
             res.cookies.set(cookies.ONBOARDING_USER, jwtOnboardingUserToken);
+
             return res;
         }
 

@@ -1,7 +1,6 @@
-import { authUserModel, TJWTUser } from "@/models/user";
+import { authUserModel } from "@/models/user";
 import connectToDatabase from "./mongodb";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
-import JWT from "./jwt";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!
 
@@ -78,19 +77,6 @@ export default class UserService {
         }
     }
 
-    static async getJWTTokenFromUser(user: TJWTUser): Promise<{
-        ok: boolean;
-        token?: any;
-        error?: any;
-    }> {
-        try {
-            const token =  JWT.createToken(user)
-            return { ok: true, token }
-        } catch (error) {
-            return { ok: false, error }
-        }
-    }
-
     static generateUsernameFromEmail(email: string) {
         const base = email.split("@")[0].trim().toLowerCase().replace(/[*+~.()'"!:@]/g, "_")
         const suffix_number = Math.floor(1000 + Math.random() * 9000)
@@ -99,3 +85,4 @@ export default class UserService {
         return username
     }
 }
+

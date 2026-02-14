@@ -1,15 +1,15 @@
 import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
-import UserService from "@/lib/user";
-import { authUserModel, TUserIdentity } from "@/models/user";
+import { authUserModel } from "@/models/user";
 import { userInterestsModel } from "@/models/user_interests";
+import { TAuthTokenCookie } from "@/types/cookies";
 import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export type TOnboardData = {
     dob: string | null,
-    identity: TUserIdentity | null,
+    identity: string | null,
     interests: string[]
 }
 
@@ -54,13 +54,14 @@ export async function POST(request: NextRequest) {
                 { $set: { birthDate: __parseDate(body.dob), identity: body.identity, onboarded: true } },
                 { new: true }
             )
-            const jwtToken = (await UserService.getJWTTokenFromUser({
+            const jwtUser: TAuthTokenCookie = {
                 email: updatedUser.email,
                 name: updatedUser.name,
                 username: updatedUser.username,
                 _id: updatedUser._id,
                 authTokenVersion: updatedUser.authTokenVersion
-            })).token!
+            }
+            const jwtToken = JWT.createToken(jwtUser)
             
             res.cookies.delete(cookies.ONBOARDING_USER)
             res.cookies.set({
@@ -79,3 +80,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" })
     }
 }
+
