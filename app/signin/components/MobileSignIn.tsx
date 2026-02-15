@@ -9,9 +9,9 @@ import useSignin from "@/hooks/useSignin"
 import { AnimatePresence, motion } from "framer-motion"
 import { JwtPayload } from "jsonwebtoken"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export default function MobileSignIn({ user }: { user: JwtPayload | null }) {
+export default function MobileSignIn({ user, nextURL }: { user: JwtPayload | null, nextURL: string | undefined }) {
     const {
         form: [form, setForm], 
         fieldError: [fieldError], 
@@ -23,6 +23,14 @@ export default function MobileSignIn({ user }: { user: JwtPayload | null }) {
     } = useSignin()
 
     const [showSessionUser, setShowSessionUser] = useState<boolean>(!!user)
+
+    useEffect(() => {
+        if (nextURL) {
+            sessionStorage.setItem("next", nextURL)
+        } else {
+            sessionStorage.removeItem("next")
+        }
+    }, [nextURL])
 
     return (
         <AnimatePresence mode="wait">

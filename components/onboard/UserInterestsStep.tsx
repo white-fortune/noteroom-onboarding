@@ -28,6 +28,8 @@ export default function UserInterestsStep() {
             data = { ...onboardingData, interests: [] }
         }
 
+        const nextURL = sessionStorage.getItem("next")
+
         try {
             setLoadingSubmit(true)
             const response = await fetch("/api/onboard", {
@@ -49,7 +51,7 @@ export default function UserInterestsStep() {
                 return setApiError(respData.message)
             }
 
-            router.replace("https://app.noteroom.co")
+            router.replace(nextURL ? nextURL : "https://app.noteroom.co")
         } catch (error) {
             setLoadingSubmit(true)
             return setApiError("Unexpected error occurded. Please try again a bit later");

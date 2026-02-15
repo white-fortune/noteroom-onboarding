@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Sign In"
 }
 
-export default async function SigninPage() {
+export default async function SigninPage({ searchParams }: { searchParams: Promise<{ next: string | undefined }> }) {
     let user = null
 
     const authTokenCookie = (await getCookies()).get(cookies.AUTH_TOKEN)
@@ -29,6 +29,9 @@ export default async function SigninPage() {
             }
         }
     }
+
+    const params = await searchParams
+    const nextURL = params.next
 
     return (
         <div className="w-full min-h-screen bg-stone-100 flex items-center justify-center font-inter">
@@ -60,14 +63,15 @@ export default async function SigninPage() {
                 </div>
 
                 <div className="w-full max-w-121.75 bg-white rounded-[20px] shadow-sm p-10 mx-auto">
-                    <DesktopSigninForm />
+                    <DesktopSigninForm nextURL={nextURL} />
                 </div>
             </div>
 
             {/* Mobile Design */}
             <div className="lg:hidden w-full min-h-screen bg-white relative overflow-hidden flex flex-col">
-                <MobileSignIn user={user} />
+                <MobileSignIn user={user} nextURL={nextURL} />
             </div>
         </div>
     );
 }
+

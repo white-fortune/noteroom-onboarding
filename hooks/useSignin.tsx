@@ -35,6 +35,7 @@ export default function useSignin(): {
         try {
             e.preventDefault()
             setLoadingSubmit(true)
+            const nextURL = sessionStorage.getItem("next")
 
             const response = await fetch("/api/auth/signin", {
                 method: "post",
@@ -46,7 +47,7 @@ export default function useSignin(): {
             setLoadingSubmit(false)
 
             if (!response.ok) {
-				return setApiError("Unexpected error occurded. Please try again a bit later");
+                return setApiError("Unexpected error occurded. Please try again a bit later");
             }
 
             const data = await response.json()
@@ -60,7 +61,7 @@ export default function useSignin(): {
                 return setApiError(data.message)
             }
 
-            router.push("https://app.noteroom.co")
+            router.replace(nextURL ? nextURL : "https://app.noteroom.co")
         } catch (error) {
             setLoadingSubmit(false)
             return setApiError("Unexpected error occurded. Please try again a bit later");

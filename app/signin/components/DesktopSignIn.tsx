@@ -5,8 +5,9 @@ import AuthInput from "@/components/AuthInput"
 import ThirdPartyAuthProviderSection from "@/components/auth/ThirdPartyAuthProvider"
 import useSignin from "@/hooks/useSignin"
 import Link from "next/link"
+import { useEffect } from "react"
 
-export default function DesktopSigninForm() {
+export default function DesktopSigninForm({ nextURL }: { nextURL: string | undefined }) {
     const {
         form: [form, setForm], 
         fieldError: [fieldError], 
@@ -16,6 +17,14 @@ export default function DesktopSigninForm() {
         handleSubmit, 
         disabled
     } = useSignin()
+
+    useEffect(() => {
+        if (nextURL) {
+            sessionStorage.setItem("next", nextURL)
+        } else {
+            sessionStorage.removeItem("next")
+        }
+    }, [nextURL])
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
