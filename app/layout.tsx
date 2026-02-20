@@ -57,6 +57,13 @@ export const metadata: Metadata = {
 		description:
 			"NoteRoom is a knowledge first social media platform built for thinkers to learn, explore ideas, and grow through meaningful content.",
 	},
+    icons: {
+		icon: [
+			{ url: "/favicon.ico" },
+            { url: '/icon.png', type: 'image/png' }
+		],
+		apple: "/apple-icon.png",
+	},
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "default",
