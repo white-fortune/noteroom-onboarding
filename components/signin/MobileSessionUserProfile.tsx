@@ -4,9 +4,18 @@ import { JwtPayload } from "jsonwebtoken"
 import AuthButton from "../AuthButton"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function MobileSessionUserProfile({ user, setShowSessionUser }: { user: JwtPayload, setShowSessionUser: React.Dispatch<React.SetStateAction<boolean>> }) {
     const router = useRouter()
+    const [nextUrl, setNextUrl] = useState<string | null>(null)
+
+    useEffect(() => {
+        const url = sessionStorage.getItem("next")
+        if (url) {
+            setNextUrl(url)
+        }
+    }, [])
 
     return (
         <div className="w-full flex flex-col items-center gap-4 mt-10">
@@ -25,7 +34,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser }: {
             </div>
 
             <div className="w-full px-6 flex justify-center">
-                <AuthButton label={`Continue as ${user.name}`} onClick={() => router.push("https://app.noteroom.co")} />
+                <AuthButton label={`Continue as ${user.name}`} onClick={() => router.push(nextUrl ? nextUrl : "https://app.noteroom.co")} />
             </div>
 
             <div className="w-full max-w-md h-6 relative flex justify-center items-center -mx-6">

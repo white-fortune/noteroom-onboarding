@@ -5,17 +5,26 @@ import { JwtPayload } from "jsonwebtoken"
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 
 export default function SessionUserProfile({ user }: { user: JwtPayload }) {
     const router = useRouter()
+    const [nextUrl, setNextUrl] = useState<string | null>(null)
+
+    useEffect(() => {
+        const url = sessionStorage.getItem("next")
+        if (url) {
+            setNextUrl(url)
+        }
+    }, [])
 
     return (
         <Tippy content={`Continue as ${user.name}`}>
             <motion.div 
                 whileHover={{ scale: 0.99 }}
                 className="flex flex-col items-center rounded-[10px] bg-white mb-10 cursor-pointer"
-                onClick={() => router.push("https://app.noteroom.co")}
+                onClick={() => router.push(nextUrl ? nextUrl : "https://app.noteroom.co")}
             >
                 <div className="profile-image overflow-hidden rounded-[10px_10px_0_0] w-50 h-50">
                     <img
