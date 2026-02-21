@@ -46,8 +46,13 @@ export default function MobileSignIn({ user, nextURL }: { user: JwtPayload | nul
                 <MobileHeader title="Sign In" />
 
                 {/* Form Content */}
-                {showSessionUser ? (
-                    <MobileSessionUserProfile user={user!} setShowSessionUser={setShowSessionUser} />
+                {showSessionUser && user ? (
+                    <MobileSessionUserProfile
+                        user={user!}
+                        setShowSessionUser={setShowSessionUser}
+                        setApiError={setApiError}
+                        setLoadingSubmit={setLoadingSubmit}
+                    />
                 ) : (
                     <form
                         onSubmit={handleSubmit}
