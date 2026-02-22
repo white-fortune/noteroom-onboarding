@@ -42,7 +42,17 @@ export async function POST(request: NextRequest) {
         await PasswordResetTokenService.deleteTokenByEmail(email);
 
         const res = NextResponse.json({ ok: true });
-        res.cookies.delete(cookies.AUTH_TOKEN);
+        res.cookies.set({
+            name: cookies.AUTH_TOKEN,
+            value: "",
+            domain: process.env.ENVIRONMENT === "production" ? ".noteroom.co" : "localhost",
+            path: "/",
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            expires: new Date(0)
+        })
+       
         return res;
     } catch (error) {
         return NextResponse.json({ ok: false, message: "Unexpected Error Occured" });

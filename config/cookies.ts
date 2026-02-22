@@ -6,3 +6,7 @@ export default {
     AUTH_TOKEN: "__nr_auth_token",
 }
 
+export const cookieMaxAge = {
+    AUTH_TOKEN: 60 * 60 * 24 * 365 * 10
+}
+

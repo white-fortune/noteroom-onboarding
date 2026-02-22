@@ -1,4 +1,4 @@
-import cookies from "@/config/cookies";
+import cookies, { cookieMaxAge } from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import connectToDatabase from "@/lib/mongodb";
 import { authUserModel } from "@/models/user";
@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
+                maxAge: cookieMaxAge.AUTH_TOKEN
             })
         }
 

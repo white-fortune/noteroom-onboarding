@@ -1,4 +1,4 @@
-import cookies from "@/config/cookies";
+import cookies, { cookieMaxAge } from "@/config/cookies";
 import { EmailVerificationTokenService } from "@/lib/auth_token";
 import EmailService from "@/lib/brevo_email";
 import JWT from "@/lib/jwt";
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
                     httpOnly: true,
                     secure: true,
                     sameSite: "none",
+                    maxAge: cookieMaxAge.AUTH_TOKEN
                 })
     
                 return res
