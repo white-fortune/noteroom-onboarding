@@ -90,7 +90,7 @@ export default function DesktopSigninForm({ nextURL }: { nextURL: string | undef
                     New here?{" "}
                 </span>
                 <Link
-                    href="/signup"
+                    href="/sign-up"
                     className="text-sky-500 text-sm font-semibold hover:underline"
                 >
                     Sign Up

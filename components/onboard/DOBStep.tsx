@@ -19,7 +19,7 @@ export default function DOBStep({ user }: { user: JwtPayload }) {
             exit={{ opacity: 0, x: 20 }}
             className="w-full max-w-147.25 flex flex-col gap-8 md:gap-11"
         >
-            <BackButton onClick={() => router.replace("/signup")} />
+            <BackButton onClick={() => router.replace("/sign-up")} />
 
             <div className="flex flex-col gap-4 md:gap-6 w-full">
                 <div className="w-full">

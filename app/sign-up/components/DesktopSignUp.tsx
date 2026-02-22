@@ -86,7 +86,7 @@ export default function DesktopSignUpForm() {
                     Already have an account?{" "}
                 </span>
                 <Link
-                    href="/signin"
+                    href="/sign-in"
                     className="text-sky-500 text-sm font-semibold hover:underline"
                 >
                     Sign In

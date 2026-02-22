@@ -10,7 +10,7 @@ export default function MobileWelcome() {
     const router = useRouter()
 
     if (width > 1024) {
-        router.push("/signin")
+        router.push("/sign-in")
     }
 
     return (
@@ -76,7 +76,7 @@ export default function MobileWelcome() {
                 </div>
 
                 <Link
-                    href={"/signup"}
+                    href={"/sign-up"}
                     prefetch
                     className="w-full max-w-md h-12 bg-sky-600 rounded-lg flex items-center justify-center text-white text-base font-medium hover:bg-sky-700 transition-all active:scale-[0.98]"
                 >
@@ -84,7 +84,7 @@ export default function MobileWelcome() {
                 </Link>
 
                 <Link
-                    href={"/signin"}
+                    href={"/sign-in"}
                     prefetch
                     className="w-full max-w-md h-12 bg-white rounded-lg outline-1 -outline-offset-1 outline-sky-500 flex items-center justify-center text-sky-500 text-base font-medium hover:bg-sky-50 transition-all active:scale-[0.98]"
                 >

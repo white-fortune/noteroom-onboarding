@@ -62,7 +62,7 @@ export default function PasswordReset({ token }: { token: string }) {
             })
             setDisabled(true)
             setTimeout(() => {
-                router.replace("/signin")
+                router.replace("/sign-in")
             }, 3000)
         } catch (error) {
             setLoadingSubmit(false)

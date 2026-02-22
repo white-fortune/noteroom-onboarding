@@ -125,7 +125,7 @@ export default function MobileSignIn({ user, nextURL }: { user: JwtPayload | nul
                                         New here?{" "}
                                     </span>
                                     <Link
-                                        href="/signup"
+                                        href="/sign-up"
                                         className="text-sky-500 text-sm font-semibold hover:underline"
                                     >
                                         Create an account

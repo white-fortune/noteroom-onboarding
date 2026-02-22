@@ -11,7 +11,7 @@ export default async function OnboardingPage() {
     const user = JWT.verifyToken(onboardingUserToken)
 
     if (!user) {
-        redirect("/signup")
+        redirect("/sign-up")
     }
 
     return <OnboardingClient user={user as JwtPayload} />

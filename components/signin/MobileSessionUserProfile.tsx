@@ -127,7 +127,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                 />
                 <div className="text-center">
                     <span className="text-zinc-600 text-sm font-medium">New here? </span>
-                    <Link href="/signup" className="text-sky-500 text-sm font-semibold hover:underline">
+                    <Link href="/sign-up" className="text-sky-500 text-sm font-semibold hover:underline">
                         Create an account
                     </Link>
                 </div>

@@ -10,15 +10,15 @@ export function proxy(request: NextRequest) {
     if (pathname === "/verify/email") {
         const emailVerificationCookie = request.cookies.get(cookies.EMAIL_VERIFICATION)
         if (!emailVerificationCookie) {
-            return NextResponse.redirect(new URL("/signin", request.url))
+            return NextResponse.redirect(new URL("/sign-in", request.url))
         }
     } else if (pathname === "/onboard") {
         const onboardingUserCookie = request.cookies.get(cookies.ONBOARDING_USER)
         if (!onboardingUserCookie) {
-            return NextResponse.redirect(new URL("/signup", request.url))
+            return NextResponse.redirect(new URL("/sign-up", request.url))
         }
     } else if (!isMobile && pathname === "/welcome") {
-        return NextResponse.redirect(new URL("/signin", request.url));
+        return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
     return NextResponse.next();
