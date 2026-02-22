@@ -7,7 +7,6 @@ import cookies from "@/config/cookies";
 import JWT from "@/lib/jwt";
 import UserService from "@/lib/user";
 import connectToDatabase from "@/lib/mongodb";
-import DemoTrigger from "@/components/auth/DemoTrigger";
 import { TAuthTokenCookie } from "@/types/cookies";
 
 export const metadata: Metadata = {
@@ -61,7 +60,6 @@ export default async function SigninPage({ searchParams }: { searchParams: Promi
                     <div className="text-slate-500 text-xl font-normal leading-7 max-w-115.75">
                         A knowledge based social platform reflecting your intellect
                     </div>
-                    <DemoTrigger />
                 </div>
 
                 <div className="w-full max-w-121.75 bg-white rounded-[20px] shadow-sm p-10 mx-auto">

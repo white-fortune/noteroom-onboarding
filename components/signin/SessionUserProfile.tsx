@@ -6,6 +6,7 @@ import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css"
 import { useRouter } from "next/navigation"
 import { forwardRef, useEffect, useState } from "react"
+import Popup from "../Popup"
 
 /** Wrapper so Tippy’s ref attaches to a DOM element (avoids React 19 ref warning). Uses real layout so tooltip position is correct. */
 const TippyRefWrapper = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(
@@ -17,14 +18,14 @@ const TippyRefWrapper = forwardRef<HTMLDivElement, { children: React.ReactNode; 
 export default function SessionUserProfile({ user }: { user: JwtPayload }) {
     const router = useRouter()
     const [nextUrl, setNextUrl] = useState<string | null>(null)
+    const [openPopup, setOpenPopup] = useState<boolean>(false)
 
     useEffect(() => {
         const url = sessionStorage.getItem("next")
         if (url) setNextUrl(url)
     }, [])
 
-    async function handleRemoveAccount(e: React.MouseEvent) {
-        e.stopPropagation()
+    async function handleRemoveAccount() {
         await fetch("/api/auth/logout", { method: "POST" })
         router.refresh()
     }
@@ -55,7 +56,7 @@ export default function SessionUserProfile({ user }: { user: JwtPayload }) {
                 <TippyRefWrapper className="absolute top-2 left-2 w-8 h-8 z-10 flex">
                     <button
                         type="button"
-                        onClick={handleRemoveAccount}
+                        onClick={() => setOpenPopup(true)}
                         className="w-full h-full rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors"
                         aria-label="Remove account"
                     >
@@ -66,6 +67,8 @@ export default function SessionUserProfile({ user }: { user: JwtPayload }) {
                     </button>
                 </TippyRefWrapper>
             </Tippy>
+
+            <Popup open={[openPopup, setOpenPopup]} action={() => handleRemoveAccount()} />
         </div>
     )
 }

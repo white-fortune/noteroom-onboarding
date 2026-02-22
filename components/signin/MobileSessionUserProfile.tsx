@@ -5,18 +5,20 @@ import AuthButton from "../AuthButton"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import GoogleLogin from "@/components/auth/GoogleLogin"
+import Popup from "../Popup"
+import GoogleLoginProvider from "../auth/GoogleLoginProvider"
 
 type MobileSessionUserProfileProps = {
     user: JwtPayload
     setShowSessionUser: React.Dispatch<React.SetStateAction<boolean>>
-    setApiError?: React.Dispatch<React.SetStateAction<string>>
-    setLoadingSubmit?: React.Dispatch<React.SetStateAction<boolean>>
+    setApiError: React.Dispatch<React.SetStateAction<string>>
+    setLoadingSubmit: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function MobileSessionUserProfile({ user, setShowSessionUser, setApiError, setLoadingSubmit }: MobileSessionUserProfileProps) {
     const router = useRouter()
     const [nextUrl, setNextUrl] = useState<string | null>(null)
+    const [openPopup, setOpenPopup] = useState<boolean>(false)
 
     useEffect(() => {
         const url = sessionStorage.getItem("next")
@@ -54,49 +56,58 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                     onClick={() => router.push(nextUrl ?? "https://app.noteroom.co")}
                 />
             </div>
-
-            {/* Remove this account */}
             <button
                 type="button"
-                onClick={handleRemoveAccount}
-                className="text-slate-500 text-sm font-medium underline hover:text-slate-600"
+                onClick={() => setOpenPopup(true)}
+                className="text-slate-500 text-sm font-medium underline hover:text-slate-600 pb-5"
             >
                 Remove this account
             </button>
 
-            {/* OR */}
-            <div className="w-full max-w-md h-6 relative flex justify-center items-center">
-                <span className="bg-white px-3.5 py-1 text-slate-500 text-[12px] font-semibold uppercase tracking-wider relative z-10">
-                    or
-                </span>
+             <div className="w-full max-w-md h-6 relative flex justify-center items-center -mx-6">
+                <div className="w-full h-px bg-slate-200 absolute"></div>
+                <div className="bg-white px-3.5 py-1 rounded-3xl relative z-10">
+                    <span className="text-slate-500 text-[10px] font-semibold uppercase leading-4 tracking-wider">
+                        or
+                    </span>
+                </div>
             </div>
 
             {/* Sign in with */}
-            <div className="w-full max-w-md flex flex-col items-center gap-3">
+            <div className="w-full max-w-md flex flex-col items-center gap-3 pt-5">
                 <span className="text-slate-700 text-sm font-medium">Sign in with</span>
+
                 <div className="flex items-center justify-center gap-8">
-                    {/* Email */}
                     <button
                         type="button"
-                        className="w-10 h-10 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+                        className="w-12 h-12 flex items-center justify-center text-black hover:opacity-70 transition-opacity cursor-pointer"
                         aria-label="Sign in with email"
+                        onClick={() => setShowSessionUser(false)}
                     >
                         <svg width="26" height="20" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M2.71484 2.71875L12.7773 9.1875L23.5586 2.71875M4.15234 18.2813C2.56453 18.2813 1.27734 16.9941 1.27734 15.4063V4.15625C1.27734 2.56843 2.56453 1.28125 4.15234 1.28125H21.4023C22.9902 1.28125 24.2773 2.56843 24.2773 4.15625V15.4063C24.2773 16.9941 22.9902 18.2813 21.4023 18.2813H4.15234Z" stroke="currentColor" strokeWidth="2.55556" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
-                    {/* Google - SVG on top, compact GoogleLogin underneath for clicks */}
-                    <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-                        {setApiError && setLoadingSubmit && (
-                            <div>
-                                <GoogleLogin setApiError={setApiError} setLoadingSubmit={setLoadingSubmit} />
-                            </div>
-                        )}
+
+                    <div className="relative w-full h-12">
+                        {/* Custom Button from Design */}
+                        <div className="absolute inset-0 flex items-center justify-center gap-3 pointer-events-none">
+                            <div className="w-6 h-6 relative overflow-hidden flex items-center justify-center">
+                                <img
+                                    src="https://app.noteroom.co/google.png"
+                                    alt="Google Logo"
+                                    className="w-5.5 h-5.5 object-contain"
+                                />
+                            </div> 
+                        </div>
+
+                        <GoogleLoginProvider setApiError={setApiError} setLoadingSubmit={setLoadingSubmit} />
                     </div>
-                    {/* Apple */}
+
+
                     <button
                         type="button"
-                        className="w-10 h-10 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+                        className="w-12 h-12 flex items-center justify-center text-black hover:opacity-70 transition-opacity cursor-pointer"
                         aria-label="Sign in with Apple"
                     >
                         <svg width="18" height="23" viewBox="0 0 18 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,6 +132,8 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                     </Link>
                 </div>
             </div>
+
+            <Popup open={[openPopup, setOpenPopup]} action={() => handleRemoveAccount()} />
         </div>
     )
 }

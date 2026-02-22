@@ -1,17 +1,15 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 
-export default function DemoTrigger() {
-    const [open, setOpen] = useState(false)
-    const router = useRouter()
-    const overlayRef = useRef<HTMLDivElement>(null)
+interface IPopupProps {
+    open: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
+    action: () => void
+}
 
-    async function handleConfirm() {
-        router.refresh()
-    }
+export default function Popup({ open: [open, setOpen], action }: IPopupProps) {
+    const overlayRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (!open) return
@@ -27,20 +25,13 @@ export default function DemoTrigger() {
     }, [open])
 
     return (
-        <>
-            <button
-                type="button"
-                onClick={() => setOpen(true)}
-                className="text-slate-400 hover:text-slate-600 text-xs underline"
-            >
-                Demo: Remove account
-            </button>
+        <> 
             {open && createPortal(
                 <div
                     ref={overlayRef}
                     role="dialog"
                     aria-modal="true"
-                    aria-labelledby="remove-account-title"
+                    aria-labelledby="title"
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50"
                     onClick={(e) => e.target === overlayRef.current && setOpen(false)}
                 >
@@ -48,7 +39,7 @@ export default function DemoTrigger() {
                         className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 flex flex-col gap-4"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2 id="remove-account-title" className="text-lg font-semibold text-slate-900">
+                        <h2 id="title" className="text-lg font-semibold text-slate-900">
                             Remove account?
                         </h2>
                         <p className="text-slate-600 text-sm">
@@ -56,18 +47,18 @@ export default function DemoTrigger() {
                         </p>
                         <div className="flex gap-3 justify-end mt-2">
                             <button
+                                onClick={() => { action(), setOpen(false) }}
                                 type="button"
-                                onClick={() => setOpen(false)}
                                 className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
                             >
-                                Cancel
+                                Remove Account
                             </button>
                             <button
                                 type="button"
-                                onClick={handleConfirm}
+                                onClick={() => setOpen(false)}
                                 className="px-4 py-2 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors"
                             >
-                                Remove account
+                                Cancel
                             </button>
                         </div>
                     </div>
