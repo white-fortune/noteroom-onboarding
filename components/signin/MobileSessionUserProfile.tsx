@@ -53,7 +53,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                 <AuthButton
                     type="button"
                     label="Continue"
-                    onClick={() => router.push(nextUrl ?? "https://app.noteroom.co")}
+                    onClick={() => router.push(nextUrl ?? "https://social.noteroom.co")}
                 />
             </div>
             <button

@@ -41,7 +41,7 @@ export default function GoogleLoginProvider({ setApiError, setLoadingSubmit }: {
                 return setApiError(data.message)
             }
 
-            router.push("https://app.noteroom.co")
+            router.push("https://social.noteroom.co")
         } catch (error) {
             setLoadingSubmit(false)
             return setApiError("Unexpected error occurded. Please try again a bit later");
