@@ -51,7 +51,7 @@ export default function UserInterestsStep() {
                 return setApiError(respData.message)
             }
 
-            router.replace(nextURL ? nextURL : "https://app.noteroom.co")
+            router.replace(nextURL ? nextURL : "https://social.noteroom.co")
         } catch (error) {
             setLoadingSubmit(true)
             return setApiError("Unexpected error occurded. Please try again a bit later");

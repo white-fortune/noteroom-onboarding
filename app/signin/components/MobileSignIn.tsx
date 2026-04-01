@@ -116,7 +116,7 @@ export default function MobileSignIn({ user, nextURL }: { user: JwtPayload | nul
                         <div className="w-full flex flex-col items-center gap-6 mt-auto">
                             <div className="flex flex-col items-center gap-1 mb-4">
                                 <img
-                                    src="https://app.noteroom.co/noteroom.png"
+                                    src="/noteroom.png"
                                     alt="NoteRoom Logo"
                                     className="w-36 h-12 object-contain"
                                 />

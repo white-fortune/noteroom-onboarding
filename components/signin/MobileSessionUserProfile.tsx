@@ -51,7 +51,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                 <AuthButton
                     type="button"
                     label="Continue"
-                    onClick={() => router.push(nextUrl ?? "https://app.noteroom.co")}
+                    onClick={() => router.push(nextUrl ?? "https://social.noteroom.co")}
                 />
             </div>
 
@@ -110,7 +110,7 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
             {/* Logo + New here */}
             <div className="w-full flex flex-col items-center mt-auto pt-12 pb-4">
                 <img
-                    src="https://app.noteroom.co/noteroom.png"
+                    src="/noteroom.png"
                     alt="NoteRoom Logo"
                     className="w-36 h-12 object-contain mb-4"
                 />

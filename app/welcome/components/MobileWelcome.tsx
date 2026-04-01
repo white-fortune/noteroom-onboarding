@@ -27,7 +27,7 @@ export default function MobileWelcome() {
                 <div className="w-full max-w-md flex flex-col gap-6">
                     <div className="w-48 h-18 flex items-center justify-start">
                         <img
-                            src="https://app.noteroom.co/phonelogo.png"
+                            src="/phonelogo.png"
                             alt="NoteRoom Logo"
                             className="w-full h-18 object-contain object-left"
                         />

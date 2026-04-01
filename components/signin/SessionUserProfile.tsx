@@ -36,7 +36,7 @@ export default function SessionUserProfile({ user }: { user: JwtPayload }) {
                     <motion.div
                         whileHover={{ scale: 0.99 }}
                         className="flex flex-col items-center w-full cursor-pointer rounded-[10px]"
-                        onClick={() => router.push(nextUrl ? nextUrl : "https://app.noteroom.co")}
+                        onClick={() => router.push(nextUrl ? nextUrl : "https://social.noteroom.co")}
                     >
                         <div className="profile-image overflow-hidden rounded-[10px_10px_0_0] w-50 h-50 relative">
                             <img

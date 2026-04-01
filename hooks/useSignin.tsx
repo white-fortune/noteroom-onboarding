@@ -61,7 +61,7 @@ export default function useSignin(): {
                 return setApiError(data.message)
             }
 
-            router.replace(nextURL ? nextURL : "https://app.noteroom.co")
+            router.replace(nextURL ? nextURL : "https://social.noteroom.co")
         } catch (error) {
             setLoadingSubmit(false)
             return setApiError("Unexpected error occurded. Please try again a bit later");
