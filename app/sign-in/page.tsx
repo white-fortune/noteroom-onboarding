@@ -45,7 +45,7 @@ export default async function SigninPage({ searchParams }: { searchParams: Promi
 
                     <img
                         className="w-auto h-12 object-contain"
-                        src="https://app.noteroom.co/noteroom.png"
+                        src="/noteroom.png"
                         alt="NoteRoom Logo"
                     />
                     

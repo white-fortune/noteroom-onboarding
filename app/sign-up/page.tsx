@@ -15,7 +15,7 @@ export default function SignupPage() {
                 <div className="flex flex-col justify-start items-start gap-5">
                     <img
                         className="w-auto h-12 object-contain"
-                        src="https://app.noteroom.co/noteroom.png"
+                        src="/noteroom.png"
                         alt="NoteRoom Logo"
                     />
                     <div className="justify-start">

@@ -14,7 +14,7 @@ export default async function VerifyEmailPage() {
                 <div className="flex flex-col justify-start items-start gap-5">
                     <img
                         className="w-auto h-12 object-contain"
-                        src="https://app.noteroom.co/noteroom.png"
+                        src="/noteroom.png"
                         alt="NoteRoom Logo"
                     />
                     <div className="justify-start">
@@ -41,7 +41,7 @@ export default async function VerifyEmailPage() {
                 <div className="w-full flex justify-center mb-8 mt-4">
                     <img
                         className="w-auto h-10 object-contain"
-                        src="https://app.noteroom.co/noteroom.png"
+                        src="/noteroom.png"
                         alt="NoteRoom Logo"
                     />
                 </div>

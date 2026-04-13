@@ -7,7 +7,7 @@ export default function GoogleLogin({ setApiError, setLoadingSubmit }: { setApiE
             <div className="absolute inset-0 bg-white rounded-md outline -outline-offset-1 outline-slate-200 flex items-center justify-center gap-3 pointer-events-none">
                 <div className="w-6 h-6 relative overflow-hidden flex items-center justify-center">
                     <img
-                        src="https://app.noteroom.co/google.png"
+                        src="/google.png"
                         alt="Google Logo"
                         className="w-5.5 h-5.5 object-contain"
                     />
