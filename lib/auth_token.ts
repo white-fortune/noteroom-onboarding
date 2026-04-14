@@ -26,7 +26,7 @@ export class EmailVerificationTokenService {
                 return { ok: false, error: new Error("Couldn't create/get token") }
             }
             
-            return { ok: true, token: { tokenID, email, otp } };
+            return { ok: true, token: { tokenID: document.tokenID, email, otp } };
         } catch (error) {
             return { ok: false, error };
         }
@@ -83,7 +83,7 @@ export class PasswordResetTokenService {
                 return { ok: false, error: new Error("Couldn't create/get token") }
             }
 
-            return { ok: true, token: tokenID };
+            return { ok: true, token: document.tokenID };
         } catch (error) {
             return { ok: false, error };
         }
