@@ -1,22 +1,31 @@
 import { nanoid } from "nanoid";
-import redisClient from "./redis";
-import PASETO from "./paseto";
+import { emailVerificationTokenModel, passwordResetTokenModel } from "@/models/auth_tokens";
+import { TEmailVerificationTokenType, TPasswordResetTokenType } from "@/types/tokens";
 
-//NOTE: hash = ev:email { tokenID, otp }
 export class EmailVerificationTokenService {
-    private static TOKEN_EXPIRY_SECONDS = 3600;
-
     static async createToken(email: string) {
         try {
             const tokenID = nanoid(20);
             const otp = EmailVerificationTokenService.createOTP();
 
-            await redisClient
-                .multi()
-                .hset(`ev:${email}`, "tokenID", tokenID, "otp", otp)
-                .expire(`ev:${email}`, this.TOKEN_EXPIRY_SECONDS)
-                .exec();
-
+            const document = await emailVerificationTokenModel.findOneAndUpdate(
+                { email },
+                {
+                    $setOnInsert: {
+                        tokenID,
+                        email,
+                        otp
+                    }
+                },
+                {
+                    upsert: true,
+                    returnDocument: "after"
+                }
+            ).lean<TEmailVerificationTokenType>()
+            if (!document) {
+                return { ok: false, error: new Error("Couldn't create/get token") }
+            }
+            
             return { ok: true, token: { tokenID, email, otp } };
         } catch (error) {
             return { ok: false, error };
@@ -25,7 +34,8 @@ export class EmailVerificationTokenService {
 
     static async deleteTokenByEmail(email: string) {
         try {
-            await redisClient.hdel(`ev:${email}`, "tokenID", "otp");
+            await emailVerificationTokenModel.deleteOne({ email })
+
             return { ok: true };
         } catch (error) {
             return { ok: false, error };
@@ -34,9 +44,9 @@ export class EmailVerificationTokenService {
 
     static async getTokenByEmail(email: string) {
         try {
-            const token = (await redisClient.hgetall(`ev:${email}`)) as { tokenID: string; otp: string };
+            const token = await emailVerificationTokenModel.findOne({ email }).lean()
 
-            if (!token.tokenID) {
+            if (!token?.tokenID) {
                 return { ok: true, token: null };
             }
             return { ok: true, token: { ...token, email } };
@@ -51,29 +61,40 @@ export class EmailVerificationTokenService {
 }
 
 
-//NOTE: variable = pr:email 1
 export class PasswordResetTokenService {
-    private static TOKEN_EXPIRY_SECONDS = 3600;
-
     static async createToken(email: string) {
         try {
-            const token = {
-                e: email,
-            };
-            const encrypted = await PASETO.encrypt(token, true);
-            await redisClient.setex(`pr:${email}`, this.TOKEN_EXPIRY_SECONDS, 1)
+            const tokenID = nanoid(20)
 
-            return { ok: true, token: encrypted };
+            const document = await passwordResetTokenModel.findOneAndUpdate(
+                { email },
+                {
+                    $setOnInsert: {
+                        tokenID,
+                        email
+                    }
+                },
+                {
+                    upsert: true,
+                    returnDocument: "after"
+                }
+            ).lean<TPasswordResetTokenType>()
+            if (!document) {
+                return { ok: false, error: new Error("Couldn't create/get token") }
+            }
+
+            return { ok: true, token: tokenID };
         } catch (error) {
             return { ok: false, error };
         }
     }
 
-    static async verifyToken(token: string) {
+    static async verifyToken(tokenID: string) {
         try {
-            const decrypted = (await PASETO.decrypt(token, true)) as { e: string };
-            const response = await redisClient.exists(`pr:${decrypted.e}`)
-            return { ok: true, valid: response === 1 }
+            const document = await passwordResetTokenModel.exists({ tokenID })
+            const response = document ? true : false
+
+            return { ok: true, valid: response }
         } catch (error) {
             return { ok: false, error };
         }
@@ -81,19 +102,26 @@ export class PasswordResetTokenService {
 
     static async deleteTokenByEmail(email: string) {
         try {
-            const response = await redisClient.del(`pr:${email}`)
-            return { ok: true, deleted: response === 1 }
+            const deletedResult = await passwordResetTokenModel.deleteOne({ email })
+            const response = deletedResult.deletedCount > 0
+
+            return { ok: true, deleted: response }
         } catch (error) {
             return { ok: false, error }
         }
     }
 
-    static async getEmailFromToken(token: string) {
+    static async getEmailFromToken(tokenID: string) {
         try {
-            const payload = await PASETO.decrypt(token, true);
-            return { ok: true, email: payload.e as string };
+            const document = await passwordResetTokenModel.findOne({ tokenID }).lean<TPasswordResetTokenType>()
+            if (!document) {
+                return { ok: false }
+            }
+
+            return { ok: true, email: document.email };
         } catch (error) {
             return { ok: false, error };
         }
     }
 }
+
