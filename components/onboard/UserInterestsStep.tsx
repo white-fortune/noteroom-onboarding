@@ -11,6 +11,7 @@ import { Step, useOnboardingContext } from "./OnboardingClient"
 type TInterest = {
     id: string,
     label: string
+    category?: string
 }
 
 export default function UserInterestsStep() {
@@ -18,7 +19,20 @@ export default function UserInterestsStep() {
     const [apiError, setApiError] = useState<string>("")
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
     const [interests, setInterests] = useState<TInterest[]>([])
+    const [selectedCategory, setSelectedCategory] = useState<string>("All")
     const router = useRouter()
+
+    const toggleInterest = (interestId: string) => {
+        setOnboardingData(prev => {
+            const hasInterest = prev.interests.includes(interestId)
+            return {
+                ...prev,
+                interests: hasInterest
+                    ? prev.interests.filter((id) => id !== interestId)
+                    : [...prev.interests, interestId]
+            }
+        })
+    }
 
     async function handleSubmit(clearInterests: boolean = false) {
         let data = onboardingData
@@ -53,7 +67,7 @@ export default function UserInterestsStep() {
 
             router.replace(nextURL ? nextURL : "https://social.noteroom.co")
         } catch (error) {
-            setLoadingSubmit(true)
+            setLoadingSubmit(false)
             return setApiError("Unexpected error occurded. Please try again a bit later");
         }
     }
@@ -76,6 +90,15 @@ export default function UserInterestsStep() {
         fetchInterests()
     }, [])
 
+    const categories = [
+        "All",
+        ...Array.from(new Set(interests.map((interest) => interest.category).filter(Boolean) as string[]))
+    ]
+    const visibleInterests = selectedCategory === "All"
+        ? interests
+        : interests.filter((interest) => interest.category === selectedCategory)
+    const rows = createTopicRows(visibleInterests)
+
     return (
         <motion.div
             key="step3"
@@ -85,24 +108,45 @@ export default function UserInterestsStep() {
         >
             <BackButton onClick={() => setStep(Step.UserIdentity)} />
 
-            <div className="w-full space-y-3.5">
-                <div className="text-neutral-400 text-lg md:text-xl font-bold font-['Inter']">Personalize your feed</div>
+            <div className="w-full space-y-3.5 text-center">
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-bold font-['Inter'] text-zinc-800">What topics interest you?</h1>
+                    <h1 className="text-3xl md:text-4xl font-bold font-['Inter'] text-zinc-800">Select topics that interests you</h1>
                     <p className="text-neutral-400 text-lg md:text-xl font-medium font-['Inter']">Select as many as you want</p>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-8 md:gap-10">
-                <div className="flex flex-wrap gap-2 md:gap-3 justify-start items-center overflow-x-hidden">
-                    {interests.map(({id, label}) => (
-                        <InterestPill
-                            key={id}
-                            topic={label}
-                            selected={onboardingData.interests.includes(id)}
-                            onClick={() => setOnboardingData(prev => ({ ...prev, interests: [...new Set([...prev.interests, id])] }))}
-                        />
-                    ))}
+            <div className="w-full flex flex-col gap-8 md:gap-10">
+                <div className="flex flex-col gap-5 md:gap-6">
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {categories.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`px-3 py-1 rounded-sm border text-xs md:text-sm transition-colors ${
+                                    category === selectedCategory
+                                        ? "bg-sky-100 border-sky-300 text-sky-700"
+                                        : "bg-white border-zinc-300 text-zinc-600 hover:border-zinc-400"
+                                }`}
+                            >
+                                {category}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2 md:gap-2.5 min-h-56">
+                        {rows.map((row, index) => (
+                            <div key={`row-${index}`} className="flex flex-wrap justify-center gap-2 md:gap-2.5">
+                                {row.map(({ id, label }) => (
+                                    <InterestPill
+                                        key={id}
+                                        topic={label}
+                                        selected={onboardingData.interests.includes(id)}
+                                        onClick={() => toggleInterest(id)}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -125,10 +169,10 @@ function InterestPill({ topic, selected, onClick }: { topic: string, selected: b
         <button
             onClick={onClick}
             className={`
-                h-11 px-8 min-w-30 bg-white rounded-md border-[1.23px] transition-all flex items-center justify-center text-base font-medium font-['Inter']
+                h-7 md:h-8 px-4 min-w-22 bg-white rounded-sm border transition-all flex items-center justify-center text-xs md:text-sm font-medium font-['Inter']
                 ${selected
-                    ? 'border-sky-600 text-sky-600'
-                    : 'border-black/10 text-zinc-500 hover:border-black/30'
+                    ? 'border-sky-500 text-sky-600 bg-sky-50'
+                    : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
                 }
                 active:scale-[0.97]
             `}
@@ -136,4 +180,29 @@ function InterestPill({ topic, selected, onClick }: { topic: string, selected: b
             {topic}
         </button>
     )
+}
+
+function createTopicRows(topics: TInterest[]) {
+    if (topics.length === 0) return []
+
+    const rows: TInterest[][] = []
+    const maxRowSize = Math.min(7, Math.max(4, Math.ceil(Math.sqrt(topics.length))))
+    let cursor = 0
+    let rowSize = maxRowSize
+    let decrementing = true
+
+    while (cursor < topics.length) {
+        rows.push(topics.slice(cursor, cursor + rowSize))
+        cursor += rowSize
+
+        if (decrementing) {
+            rowSize -= 1
+            if (rowSize <= 2) decrementing = false
+        } else {
+            rowSize += 1
+            if (rowSize >= maxRowSize) decrementing = true
+        }
+    }
+
+    return rows
 }
