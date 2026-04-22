@@ -169,10 +169,10 @@ function InterestPill({ topic, selected, onClick }: { topic: string, selected: b
         <button
             onClick={onClick}
             className={`
-                h-7 md:h-8 px-4 min-w-22 bg-white rounded-sm border transition-all flex items-center justify-center text-xs md:text-sm font-medium font-['Inter']
+                h-7 md:h-8 px-4 min-w-22 rounded-sm border transition-all flex items-center justify-center text-xs md:text-sm font-medium font-['Inter']
                 ${selected
-                    ? 'border-sky-500 text-sky-600 bg-sky-50'
-                    : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    ? 'border-transparent text-[#42ACDE] bg-[#E1F2FA]'
+                    : 'border-zinc-200 text-zinc-600 bg-white hover:border-[#42ACDE]'
                 }
                 active:scale-[0.97]
             `}
