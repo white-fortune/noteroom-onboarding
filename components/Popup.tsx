@@ -3,12 +3,17 @@
 import { useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 
-interface IPopupProps {
+export interface IPopupProps {
+    texts: {
+        title: string,
+        description: string,
+        primaryActionLabel: string
+    },
     open: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
     action: () => void
 }
 
-export default function Popup({ open: [open, setOpen], action }: IPopupProps) {
+export default function Popup({ open: [open, setOpen], action, texts }: IPopupProps) {
     const overlayRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -40,10 +45,10 @@ export default function Popup({ open: [open, setOpen], action }: IPopupProps) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <h2 id="title" className="text-lg font-semibold text-slate-900">
-                            Remove account?
+                            {texts.title} 
                         </h2>
                         <p className="text-slate-600 text-sm">
-                            You will be signed out. You can sign in again anytime with this account.
+                            {texts.description}
                         </p>
                         <div className="flex gap-3 justify-end mt-2">
                             <button
@@ -51,7 +56,7 @@ export default function Popup({ open: [open, setOpen], action }: IPopupProps) {
                                 type="button"
                                 className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
                             >
-                                Remove Account
+                                {texts.primaryActionLabel}
                             </button>
                             <button
                                 type="button"

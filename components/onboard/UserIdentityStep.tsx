@@ -93,16 +93,35 @@ function IdentityCard({ option, selected, onClick }: { option: IdentityOption, s
         <div
             onClick={onClick}
             className={`
-                w-full h-auto min-h-27.5 md:min-h-36 px-3 py-3 md:px-4 md:py-4 bg-white rounded-xl md:rounded-2xl cursor-pointer transition-all duration-200
+                w-full h-auto min-h-27.5 md:min-h-36 px-3 py-3 md:px-4 md:py-4 rounded-xl md:rounded-2xl cursor-pointer transition-all duration-200
                 shadow-[0px_0px_2.4697303771972656px_0px_rgba(0,0,0,0.25)]
                 flex flex-col justify-start items-start gap-1 md:gap-2.5
-                border-2 ${selected ? 'border-sky-600' : 'border-transparent'}
-                hover:shadow-md hover:-translate-y-0.5
+                border-2 border-transparent ${selected ? 'bg-[#E1F2FA]' : 'bg-white'}
+                hover:shadow-md hover:-translate-y-0.5 hover:border-[#42ACDE]
                 active:scale-[0.98]
             `}
         >
-            <div className={`self-stretch text-base md:text-xl font-bold font-['Inter'] ${selected ? 'text-sky-600' : 'text-gray-800'}`}>
-                {option.title}
+            <div className="self-stretch flex items-center gap-2 md:gap-3">
+                {selected && (
+                    <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="shrink-0"
+                        aria-hidden="true"
+                    >
+                        <circle cx="11" cy="11" r="11" fill="#42ACDE" />
+                        <path
+                            d="M16.2 7.8L9.7 14.3C9.57 14.43 9.41 14.5 9.23 14.5C9.05 14.5 8.89 14.43 8.76 14.3L5.8 11.34C5.53 11.07 5.53 10.63 5.8 10.36C6.07 10.09 6.5 10.09 6.77 10.36L9.23 12.82L15.23 6.82C15.5 6.55 15.93 6.55 16.2 6.82C16.47 7.09 16.47 7.53 16.2 7.8Z"
+                            fill="white"
+                        />
+                    </svg>
+                )}
+                <div className={`text-base md:text-xl font-bold font-['Inter'] ${selected ? 'text-[#42ACDE]' : 'text-gray-800'}`}>
+                    {option.title}
+                </div>
             </div>
             <div className="self-stretch text-zinc-700 text-xs md:text-base font-normal font-['Inter'] leading-tight md:leading-snug">
                 {option.description}
