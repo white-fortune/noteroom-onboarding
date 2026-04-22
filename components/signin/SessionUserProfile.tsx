@@ -7,8 +7,9 @@ import "tippy.js/dist/tippy.css"
 import { useRouter } from "next/navigation"
 import { forwardRef, useEffect, useState } from "react"
 import Popup from "../Popup"
+import removeAccountPopupText from "./__RemoveAccountPopupText"
 
-/** Wrapper so Tippy’s ref attaches to a DOM element (avoids React 19 ref warning). Uses real layout so tooltip position is correct. */
+//NOTE: Wrapper so Tippy’s ref attaches to a DOM element (avoids React 19 ref warning). Uses real layout so tooltip position is correct.
 const TippyRefWrapper = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(
     function TippyRefWrapper({ children, className }, ref) {
         return <div ref={ref} className={className}>{children}</div>
@@ -68,7 +69,11 @@ export default function SessionUserProfile({ user }: { user: JwtPayload }) {
                 </TippyRefWrapper>
             </Tippy>
 
-            <Popup open={[openPopup, setOpenPopup]} action={() => handleRemoveAccount()} />
+            <Popup 
+                texts={removeAccountPopupText}
+                open={[openPopup, setOpenPopup]} 
+                action={() => handleRemoveAccount()} 
+            />
         </div>
     )
 }

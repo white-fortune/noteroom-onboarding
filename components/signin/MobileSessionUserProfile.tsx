@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Popup from "../Popup"
 import GoogleLoginProvider from "../auth/GoogleLoginProvider"
+import removeAccountPopupText from "./__RemoveAccountPopupText"
 
 type MobileSessionUserProfileProps = {
     user: JwtPayload
@@ -133,7 +134,11 @@ export default function MobileSessionUserProfile({ user, setShowSessionUser, set
                 </div>
             </div>
 
-            <Popup open={[openPopup, setOpenPopup]} action={() => handleRemoveAccount()} />
+            <Popup 
+                texts={removeAccountPopupText}
+                open={[openPopup, setOpenPopup]} 
+                action={() => handleRemoveAccount()} 
+            />
         </div>
     )
 }
